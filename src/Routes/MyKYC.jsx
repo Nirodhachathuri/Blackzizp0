@@ -10,7 +10,7 @@ import StakingSlider from "../components/StakingSlider";
 import { Search, Menu } from "@mui/icons-material";
 import commonbg from "../Assets/images/gergeg-01.png";
 import AnimatedImage from "../components/AnimatedBG";
-import ToolTipPositions from "../components/NotificationPopUp";
+
 
 
 

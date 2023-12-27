@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import bg from "../Assets/images/loginbg.png";
 import {
   Person,
@@ -136,7 +136,6 @@ const SignUp = () => {
   const [showStep1, setShowStep1] = useState(true);
   const [showStep2, setShowStep2] = useState(false);
 
-  const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [formData, setFormData] = useState({
     username: "",
@@ -161,7 +160,6 @@ const SignUp = () => {
   };
 
   const openFileBrowser = () => {
-    fileInputRef.current.click();
   };
 
   const handleNextClick = () => {
@@ -373,7 +371,6 @@ console.log('objeco00t',values);
                             </button>
                             <input
                               type="file"
-                              ref={fileInputRef}
                               onChange={handleFileInputChange}
                               style={{ display: "none" }}
                               accept="image/jpeg, image/png, image/gif"
