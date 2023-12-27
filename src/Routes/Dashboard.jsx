@@ -22,7 +22,7 @@ import CoinChart from "../components/CoinChart";
 import CoinDetail from "../components/CoinDetail";
 import { useNavigate } from "react-router-dom";
 import DefaultCoinChart from "../components/DefaultCoinChart";
-import ToolTipPositions from "../components/NotificationPopUp";
+// import ToolTipPositions from "../components/NotificationPopUp";
 // import { getNotificationCount } from '../components/NotificationPopUp';
 // import ToolTipPositions from '../components/NotificationPopUp';
 
@@ -166,7 +166,7 @@ const Dashboard = () => {
               </h3>
             </div>
 
-            <div className="px-3 justify-center items-center flex ">
+            {/* <div className="px-3 justify-center items-center flex ">
               <div className="notification md:w-[56px] md:h-[56px] w-[32px] h-[32px] relative">
                 {refUsers && (
                   <ToolTipPositions
@@ -187,7 +187,7 @@ const Dashboard = () => {
                   />
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="w-full mt-5 mb-5 relative bg-[#151515] p-5 flex flex-col rounded-[6px]">
