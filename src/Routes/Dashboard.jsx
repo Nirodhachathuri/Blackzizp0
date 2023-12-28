@@ -22,7 +22,9 @@ import CoinChart from "../components/CoinChart";
 import CoinDetail from "../components/CoinDetail";
 import { useNavigate } from "react-router-dom";
 import DefaultCoinChart from "../components/DefaultCoinChart";
-// import ToolTipPositions from "../components/NotificationPopUp";
+
+import ToolTipPositions from "../components/NotificationPopUp";
+import { env_data } from "../config/config";
 // import { getNotificationCount } from '../components/NotificationPopUp';
 import ToolTipPositions from '../components/NotificationPopUp';
 
@@ -46,7 +48,8 @@ const Dashboard = () => {
 
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const getRefUsers = async () => {
-    const resp = await axios.get("https://black-back.onrender.com/token");
+    const resp = await axios.get(`${env_data.base_url}/token`);
+
     const decoded = jwt_decode(resp.data.accessToken);
     setDecodeValues(decoded);
     console.log(
@@ -56,7 +59,8 @@ const Dashboard = () => {
     const user_code = decoded.user_code;
      setBalance(decoded.balance)
     const response = await axios.get(
-      `https://black-back.onrender.com/newcommer/get/${user_code}`
+      `${env_data.base_url}/newcommer/get/${user_code}`
+
     );
     console.log(
       "🚀 ~ file: Dashboard.jsx:54 ~ getRefUsers ~ response:",
@@ -64,6 +68,9 @@ const Dashboard = () => {
     );
     const resIrFamily = await axios.get(
       `https://black-back.onrender.com/getIrFamily/get/${user_code}`
+
+      `${env_data.base_url}/getIrFamily/get/${user_code}`
+
     );
     console.log("🚀 ~ resIrFamily:", resIrFamily.data.data);
     setIrFamily(resIrFamily.data.data);
@@ -329,8 +336,10 @@ const Dashboard = () => {
                   </span>
 
                   <h3 className="text-white text-center sm:text-[20px]">
-                    {" "}
                     USDT {balance}.00
+
+                    USDT {decodeValues ? decodeValues.balance : 0.00}
+
                   </h3>
                 </div>
 
@@ -351,7 +360,7 @@ const Dashboard = () => {
 
                   <h3 className="text-white text-center sm:text-[20px]">
                     {" "}
-                    USDT 0.00
+                    USDT {decodeValues ? decodeValues.balance : 0.00}
                   </h3>
                 </div>
 

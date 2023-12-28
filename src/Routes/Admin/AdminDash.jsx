@@ -15,6 +15,7 @@ import UpdateUser from "./UpdateUser";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import PopDash from "../../components/Admin/PopDash";
+import { env_data } from "../../config/config";
 
 const AdminDash = () => {
   useEffect(() => {
@@ -22,8 +23,9 @@ const AdminDash = () => {
     getHistory();
   }, []);
   const getControls = async () => {
-    const resp = await axios.get("https://black-back.onrender.com/getcontrols");
-    const rep2  = await axios.get("https://black-back.onrender.com/users/newregistrations");
+
+    const resp = await axios.get(`${env_data.base_url}/getcontrols`);
+
     setControls(resp.data.controls);
     setNewregistrations(rep2.data.newUsers);
     console.log(
@@ -275,7 +277,8 @@ const AdminDash = () => {
       "updatedPackageTable[packageIndex].availability[statusIndex]",
       updatedPackageTable[packageIndex].availability[statusIndex].id
     );
-    // const response = await axios.put("https://black-back.onrender.com/changeStatus", {
+
+    // const response = await axios.put(`${env_data.base_url}/changeStatus`, {
     //   status:  updatedPackageTable[packageIndex].availability[statusIndex].checked,
     //   id:  updatedPackageTable[packageIndex].availability[statusIndex].id,
     // });
@@ -338,7 +341,9 @@ const AdminDash = () => {
       updatedControls[controlIndex].status,
       updatedControls[controlIndex].id
     );
-    const response = await axios.put("https://black-back.onrender.com/changeStatus", {
+
+    const response = await axios.put(`${env_data.base_url}/changeStatus`, {
+
       status: (updatedControls[controlIndex].status =
         updatedControls[controlIndex].status),
       id: updatedControls[controlIndex].id,
