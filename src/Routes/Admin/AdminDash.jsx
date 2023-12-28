@@ -13,22 +13,27 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import UpdateUser from "./UpdateUser";
 import axios from "axios";
-
+import jwt_decode from "jwt-decode";
 import PopDash from "../../components/Admin/PopDash";
 
 const AdminDash = () => {
   useEffect(() => {
     getControls();
+    getHistory();
   }, []);
   const getControls = async () => {
-    const resp = await axios.get("http://localhost:5001/getcontrols");
+    const resp = await axios.get("https://black-back.onrender.com/getcontrols");
+    const rep2  = await axios.get("https://black-back.onrender.com/users/newregistrations");
     setControls(resp.data.controls);
+    setNewregistrations(rep2.data.newUsers);
     console.log(
       "🚀 ~ file: AdminDash.jsx:24 ~ getControls ~ resp.data.controls:",
       resp.data.controls
     );
   };
   const [activeSection, setActiveSection] = useState("home");
+  const [newregistrations, setNewregistrations] = useState("home");
+  const [allUsers, setAllUsers] = useState();
 
   const handleNavClick = (sectionName) => {
     setActiveSection(sectionName);
@@ -42,11 +47,11 @@ const AdminDash = () => {
 
   const DashData = [
     { id: 1, value: 2, label: "IR Community" },
-    { id: 2, value: 1, label: "Users Online" },
+    { id: 2, value: `${allUsers?.length}`, label: "Users" },
     { id: 3, value: 0, label: "Today Withdrawals" },
     { id: 4, value: 0, label: "Today Deposits" },
     { id: 5, value: 1, label: "Today D/S count" },
-    { id: 6, value: 2, label: "New Registrations" },
+    { id: 6, value: `${newregistrations?.length}`, label: "New Registrations" },
     { id: 7, value: 5, label: "Banned Users" },
   ];
 
@@ -136,7 +141,15 @@ const AdminDash = () => {
   const closePopDash = () => {
     setIsPopDashOpen(false);
   };
+  const getHistory = async () => {
+    const resp = await axios.get("https://black-back.onrender.com/token");
+    const decoded = jwt_decode(resp.data.accessToken);
 
+    const user_name = decoded.username;
+    const response = await axios.get("https://black-back.onrender.com/GetAllUsers");
+    console.log(response, "response");
+    setAllUsers(response.data.newUsers);
+  };
   const [controlData, setControlData] = useState([
     // {
     //   id: 1,
@@ -201,7 +214,6 @@ const AdminDash = () => {
     },
   ]);
   const initialControls = [
-
     {
       id: 1,
       name: "MAKE_DEPOSITS",
@@ -226,7 +238,7 @@ const AdminDash = () => {
 
   const [controls, setControls] = useState(initialControls);
 
-  const limitedTableData = tableData.slice(0, selectedRowCount).map((row) => ({
+  const limitedTableData = allUsers?.slice(0, selectedRowCount).map((row) => ({
     ...row,
     checked: checkedRows[row.id] || false,
   }));
@@ -263,7 +275,7 @@ const AdminDash = () => {
       "updatedPackageTable[packageIndex].availability[statusIndex]",
       updatedPackageTable[packageIndex].availability[statusIndex].id
     );
-    // const response = await axios.put("http://localhost:5001/changeStatus", {
+    // const response = await axios.put("https://black-back.onrender.com/changeStatus", {
     //   status:  updatedPackageTable[packageIndex].availability[statusIndex].checked,
     //   id:  updatedPackageTable[packageIndex].availability[statusIndex].id,
     // });
@@ -326,7 +338,7 @@ const AdminDash = () => {
       updatedControls[controlIndex].status,
       updatedControls[controlIndex].id
     );
-    const response = await axios.put("http://localhost:5001/changeStatus", {
+    const response = await axios.put("https://black-back.onrender.com/changeStatus", {
       status: (updatedControls[controlIndex].status =
         updatedControls[controlIndex].status),
       id: updatedControls[controlIndex].id,
@@ -500,106 +512,64 @@ const AdminDash = () => {
                     id="style-5"
                   >
                     <table className="block whitespace-nowrap table-fixed w-full">
-                    <thead>
-    <tr>
-    <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
-                        IR Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        First Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Last Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        DOB
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        contact
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        email
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        registered DATE
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        activated date
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Wallet Balance
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total Deposits
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total Withdrawals
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total Direct Sales Income
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total IR Alloawnce
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total OR Commission
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total Investing Income
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 w-[220px] border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40">
-                        action
-                      </th>
-    </tr>
-  </thead>
+                      <thead>
+                        <tr>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
+                            IR Name
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            First Name
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            Last Name
+                          </th>
+                         
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            contact
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            email
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            registered DATE
+                          </th>
+                         
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            Wallet Balance
+                          </th>
+                         
+                          <th className="uppercase text-[12px] text-white p-2 w-[220px] border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40">
+                            action
+                          </th>
+                        </tr>
+                      </thead>
                       <tbody className="w-full">
                         {limitedTableData.map((row) => (
                           <tr key={row.id}>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.IRname}
+                              {row.ref_code}
                             </td>
                             <td className="fname text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.fname}
+                              {row.username}
                             </td>
                             <td className="lname text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.lname}
+                              {row.last_name}
                             </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.dob}
-                            </td>
+                  
                             <td className="contact text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.contact}
+                              {row.mobile}
                             </td>
                             <td className="email text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
                               {row.email}
                             </td>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.regdate}
+                              {row.createdAt}
                             </td>
+                    
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.actdate}
+                              {row.balance}
                             </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.walletbalance}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totaldeposit}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totalwithdrawal}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totaldirectsale}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totalIRallowance}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totalORcommission}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totalInvestIncome}
-                            </td>
+                           
 
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 text-center w-[220px]">
                               <div className="mx-auto text-[12px] justify-center items-center p-2">

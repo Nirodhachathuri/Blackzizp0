@@ -6,49 +6,28 @@ export default function DefaultBinaryTree() {
     const [selection, setSelection] = useState([]);
     const [data] = useState([
         {
-            label: 'ChathuraPD6',
+            label: 'Dev',
             className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
             expanded: true,
             children: [
                 {
-                    label: 'Kalana66',
+                    label: 'debv66',
                     className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
                     expanded: true,
-                    children: [
-                        {
-                            className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                            label: 'Chathurar87'
-                        },
-                        {
-                            className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                            label: 'Shehan97',
-                            expanded: true,
-                            children : [
-                                {
-                                    className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                                    label:'Ashani12K'
-                                },
-                                {
-                                    className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                                    label:'NimsaraLakruwan99'
-                                }
-                               
-                            ]
-                        }
-                    ]
+                    
                 },
                 {
-                    label: 'AnudhaKt23',
+                    label: 'Dev55',
                     className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
                     expanded: true,
                     children: [
                         {
                             className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                            label: 'Nimal99'
+                            label: 'User'
                         },
                         {
                             className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                            label: 'Kasun64'
+                            label: 'dev4'
                         }
                     ]
                 }

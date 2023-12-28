@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultCoinChart from "../components/DefaultCoinChart";
 // import ToolTipPositions from "../components/NotificationPopUp";
 // import { getNotificationCount } from '../components/NotificationPopUp';
-// import ToolTipPositions from '../components/NotificationPopUp';
+import ToolTipPositions from '../components/NotificationPopUp';
 
 const Dashboard = () => {
   useEffect(() => {
@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [refUsers, setRefUsers] = useState(null);
   const [decodeValues, setDecodeValues] = useState(null);
+  const [balance, setBalance] = useState(null);
 
   // Function to update selectedCoin when a new coin is selected
   const handleCoinSelection = (coin) => {
@@ -45,7 +46,7 @@ const Dashboard = () => {
 
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const getRefUsers = async () => {
-    const resp = await axios.get("http://localhost:5001/token");
+    const resp = await axios.get("https://black-back.onrender.com/token");
     const decoded = jwt_decode(resp.data.accessToken);
     setDecodeValues(decoded);
     console.log(
@@ -53,15 +54,16 @@ const Dashboard = () => {
       decoded
     );
     const user_code = decoded.user_code;
+     setBalance(decoded.balance)
     const response = await axios.get(
-      `http://localhost:5001/newcommer/get/${user_code}`
+      `https://black-back.onrender.com/newcommer/get/${user_code}`
     );
     console.log(
       "🚀 ~ file: Dashboard.jsx:54 ~ getRefUsers ~ response:",
       response.data.data
     );
     const resIrFamily = await axios.get(
-      `http://localhost:5001/getIrFamily/get/${user_code}`
+      `https://black-back.onrender.com/getIrFamily/get/${user_code}`
     );
     console.log("🚀 ~ resIrFamily:", resIrFamily.data.data);
     setIrFamily(resIrFamily.data.data);
@@ -166,7 +168,7 @@ const Dashboard = () => {
               </h3>
             </div>
 
-            {/* <div className="px-3 justify-center items-center flex ">
+            <div className="px-3 justify-center items-center flex ">
               <div className="notification md:w-[56px] md:h-[56px] w-[32px] h-[32px] relative">
                 {refUsers && (
                   <ToolTipPositions
@@ -187,7 +189,7 @@ const Dashboard = () => {
                   />
                 )}
               </div>
-            </div> */}
+            </div>
           </div>
 
           <div className="w-full mt-5 mb-5 relative bg-[#151515] p-5 flex flex-col rounded-[6px]">
@@ -328,7 +330,7 @@ const Dashboard = () => {
 
                   <h3 className="text-white text-center sm:text-[20px]">
                     {" "}
-                    USDT 0.00
+                    USDT {balance}.00
                   </h3>
                 </div>
 

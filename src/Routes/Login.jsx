@@ -32,7 +32,7 @@ const Login = () => {
     e.preventDefault();
     try {
       //   setWait(true);
-      const res = await axios.post("http://localhost:5001/login", {
+      const res = await axios.post("https://black-back.onrender.com/login", {
         email: email,
         password: password,
         ipv4: ip,

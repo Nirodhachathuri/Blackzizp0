@@ -84,7 +84,7 @@ export default function BinaryTable() {
                 // onChangeIndex={handleChangeIndex}
             >
                 <TabPanel value={value} index={0} dir={theme.direction} className='text-white'>
-                    <DefaultBinaryTree/>
+                    {/* <DefaultBinaryTree/> */}
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction} className='text-white'>
                     <IntroducerTree/>

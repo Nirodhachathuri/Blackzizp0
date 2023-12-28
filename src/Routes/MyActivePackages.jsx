@@ -16,7 +16,7 @@ const MyActivePackages = () => {
   }, []);
   const [resData, setResData] = useState([]);
   const getHistory = async () => {
-    const user_response = await axios.get("http://localhost:5001/token");
+    const user_response = await axios.get("https://black-back.onrender.com/token");
     const decoded = jwt_decode(user_response.data.accessToken);
     console.log(
       "🚀 ~ file: MyProfile.jsx:121 ~ refreshToken ~ decoded:",
@@ -25,32 +25,52 @@ const MyActivePackages = () => {
     const user_id = decoded.userId
 
     const response = await axios.get(
-      `http://localhost:5001/getpackages/${user_id}`
+      `https://black-back.onrender.com/getpackages/${user_id}`
     );
     console.log(
       "🚀 ~ file: MyActivePackages.jsx:33 ~ getHistory ~ response:",
       response.data
     );
     const packages = response.data.packages;
-    const relevantPackages = {};
+    // const relevantPackages = {};
 
-    // Loop through the res array and map the relevant buyPackagesData
-    packages?.forEach((item) => {
-      const { packageId, id, createdAt } = item;
-      const foundPackage = buyPackagesData.find((pkg) => pkg.id === id);
-      if (foundPackage) {
-        relevantPackages[packageId] = {
-          packageId: foundPackage.packageId,
-          amount: foundPackage.amount,
-          createdAt: createdAt,
+    // // Loop through the res array and map the relevant buyPackagesData
+    // packages?.forEach((item) => {
+    //   const { packageId, id, createdAt } = item;
+    //   const foundPackage = buyPackagesData.find((pkg) => pkg.id === id);
+    //   if (foundPackage) {
+    //     relevantPackages[packageId] = {
+    //       packageId: foundPackage.packageId,
+    //       amount: foundPackage.amount,
+    //       createdAt: createdAt,
+    //     };
+    //   }
+    // });
+
+    // // Convert the relevantPackages object into an array
+    // const relevantPackagesArray = Object.values(relevantPackages);
+    const resultArray = packages.map((item) => {
+      const correspondingBuyPackage = buyPackagesData.find(
+        (buyPackage) => buyPackage.id === item.packageId
+      );
+    
+      if (correspondingBuyPackage) {
+        return {
+          packageName: correspondingBuyPackage.packageId,
+          amount: correspondingBuyPackage.amount,
+          createdAt: item.createdAt,
         };
       }
+    
+      return null; // Handle the case where there is no match
     });
-
-    // Convert the relevantPackages object into an array
-    const relevantPackagesArray = Object.values(relevantPackages);
-    setResData(relevantPackagesArray);
-    console.log("relevantPackagesArray", relevantPackagesArray);
+    
+    // Filter out null values (cases where there is no match)
+    const filteredResultArray = resultArray.filter((item) => item !== null);
+    
+    console.log(filteredResultArray);
+    setResData(filteredResultArray);
+    console.log("relevantPackagesArray", filteredResultArray);
   };
   const buyPackagesData = [
     { id: 1, packageId: "gold", amount: 100, active: 1 },
@@ -143,7 +163,7 @@ const MyActivePackages = () => {
                       {/* Add the appropriate data from the item to each <td> */}
                       <td className="text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 bg-[#1a1a1a]">
                         {/* Use item.packageId here */}
-                        {item.packageId}
+                        {item.packageName}
                       </td>
                       <td className="text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 bg-[#1a1a1a]">
                         {/* Use item.amount here */}

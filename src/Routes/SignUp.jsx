@@ -173,7 +173,7 @@ const SignUp = () => {
 console.log('objeco00t',values);
     try {
       // Replace 'your/api/endpoint' with the actual URL of your API endpoint
-      const response = await axios.post('http://localhost:5001/register', values);
+      const response = await axios.post('https://black-back.onrender.com/register', values);
 
       console.log("API Response:", response.data);
       setTimeout(() => {

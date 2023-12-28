@@ -166,6 +166,7 @@ const CurrentWallet = () => {
   const [userId, setUserId] = useState("");
   // eslint-disable-next-line
   const [username, setUsername] = useState("");
+  const [walBalance, setWallBalance] = useState("");
   // eslint-disable-next-line
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
@@ -186,13 +187,14 @@ const CurrentWallet = () => {
 
   const refreshToken = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/token");
+      const response = await axios.get("https://black-back.onrender.com/token");
       setToken(response.data.accessToken);
       const decoded = jwt_decode(response.data.accessToken);
       console.log("🚀 ~ refreshToken ~ decoded:", decoded);
       setUserId(decoded.userId);
       setUsername(decoded.username);
       setExpire(decoded.exp);
+      setWallBalance(decoded.wallet);
     } catch (error) {
       if (error.response) {
         // history.push("/");
@@ -206,7 +208,7 @@ const CurrentWallet = () => {
     async (config) => {
       const currentDate = new Date();
       if (expire * 1000 < currentDate.getTime()) {
-        const response = await axios.get("http://localhost:5001/token");
+        const response = await axios.get("https://black-back.onrender.com/token");
         config.headers.Authorization = `Bearer ${response.data.accessToken}`;
         setToken(response.data.accessToken);
         const decoded = jwt_decode(response.data.accessToken);
@@ -223,7 +225,7 @@ const CurrentWallet = () => {
   );
 
   const getHistory = async () => {
-    const resp = await axios.get("http://localhost:5001/token");
+    const resp = await axios.get("https://black-back.onrender.com/token");
     const decoded = jwt_decode(resp.data.accessToken);
 
     console.log(
@@ -232,7 +234,7 @@ const CurrentWallet = () => {
     );
     const user_name = decoded.username;
     const response = await axios.post(
-      "http://localhost:5001/recharge/history",
+      "https://black-back.onrender.com/recharge/history",
       {
         username: user_name,
       }
@@ -241,7 +243,7 @@ const CurrentWallet = () => {
     setRechargeHistory(response.data);
 
     const responseWithdrawal = await axios.post(
-      "http://localhost:5001/withdraw/history",
+      "https://black-back.onrender.com/withdraw/history",
       {
         username: user_name,
       }
@@ -249,7 +251,7 @@ const CurrentWallet = () => {
 
     setWithdrawalHistory(responseWithdrawal.data);
     const responseControls = await axios.get(
-      "http://localhost:5001/systemcontrols"
+      "https://black-back.onrender.com/systemcontrols"
       
     );
 console.log('first',responseControls.data.controls)
@@ -293,7 +295,7 @@ console.log('first',responseControls.data.controls)
 
                     <h3 className="text-[#E08E20] text-[24px] font-semibold">
                       {" "}
-                      USDT 78.90
+                      USDT {walBalance}
                     </h3>
                   </div>
                 </div>
