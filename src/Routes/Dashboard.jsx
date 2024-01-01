@@ -262,7 +262,7 @@ const Dashboard = () => {
 
                   <h3 className="text-white text-center sm:text-[20px]">
                     {" "}
-                    USDT {decodeValues ? decodeValues.balance : 0.0}
+                    USDT {earnedValue}
                   </h3>
                 </div>
 
