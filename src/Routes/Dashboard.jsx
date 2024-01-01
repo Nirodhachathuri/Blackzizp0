@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [refUsers, setRefUsers] = useState(null);
   const [decodeValues, setDecodeValues] = useState(null);
+  const [earnedValue, setEarnedValue] = useState(0);
 
   // Function to update selectedCoin when a new coin is selected
   const handleCoinSelection = (coin) => {
@@ -64,6 +65,17 @@ const Dashboard = () => {
     const resIrFamily = await axios.get(
       `${env_data.base_url}/getIrFamily/get/${user_code}`
     );
+
+    const allHistrory = await axios.get(
+      `${env_data.base_url}/gethistory/${decoded.userId}`
+    );
+    let earnedvalue=0;
+    allHistrory.data.all_history.map(obj=>{
+      if(obj.balanceIncreased){
+        earnedvalue=earnedvalue+obj.amount
+      }
+    })
+    setEarnedValue(earnedvalue);
     console.log("🚀 ~ resIrFamily:", resIrFamily.data.data);
     setIrFamily(resIrFamily.data.data);
     setRefUsers(response.data);
@@ -329,7 +341,7 @@ const Dashboard = () => {
 
                   <h3 className="text-white text-center sm:text-[20px]">
                     {" "}
-                    USDT {decodeValues ? decodeValues.balance : 0.00}
+                    USDT {earnedValue ? earnedValue : 0.00}
                   </h3>
                 </div>
 
