@@ -26,7 +26,8 @@ const MyBVPoints = () => {
     // setleftSideBV(decoded.leftSideBV);
   };
 
-  let BVbalance = balance / 5;
+  let Accbalance = balance;
+  let BVbalance = Accbalance/2;
   let left = BVbalance / 10;
   let right = BVbalance / 10;
 
