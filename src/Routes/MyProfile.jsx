@@ -642,7 +642,7 @@ const MyProfile = () => {
                             <input
                               type="text"
                               className="w-full p-3 bg-[#1a1a1a] border-[1px] rounded-md border-[#565656] border-opacity-40 h-[44px] outline-none md:text-[1rem] text-[12px]"
-                              placeholder="16-May-2023"
+                              placeholder=" NIC "
                               readOnly
                             />
                           </div>
