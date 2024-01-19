@@ -37,6 +37,13 @@ const Dashboard = () => {
 
   const [totalWithdrawal, setTotalWithdrawal] = useState(0);
 
+  // const [isPopUpOpen, setPopUpOpen] = useState(false);
+  // const [selectedRowCount, setSelectedRowCount] = useState(10);
+  // const [irFamily, setIrFamily] = useState();
+  // const [notificationCount, setNotificationCount] = useState(0);
+  const [error, setError] = useState(null);
+
+
   const handleCoinSelection = (coin) => {
     setSelectedCoin(coin);  
   };
