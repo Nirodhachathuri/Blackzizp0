@@ -417,7 +417,7 @@ useEffect(() => {
                             {row.user_code}
                           </td>
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
-                            {row.username}
+                            {row.username} 
                           </td>
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
                             {row.last_name}
