@@ -85,8 +85,8 @@ const Dashboard = () => {
   };
   const filteredData = irFamily?.filter((row) => {
   return (
-    row.user_code.toLowerCase().includes(searchValue.toLowerCase()) ||
-    row.username.toLowerCase().includes(searchValue.toLowerCase())
+      row?.user_code?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      row?.username?.toLowerCase().includes(searchValue.toLowerCase())
   );
 });
 
