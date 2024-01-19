@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useRef} from "react";
 import bg from "../Assets/images/loginbg.png";
 import {
   Person,
@@ -11,13 +11,14 @@ import {
   AlternateEmail,
   ContactMail,
 } from "@mui/icons-material";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import {Routes, Route, useNavigate} from "react-router-dom";
 import AnimateImage from "../components/animateImage";
 import CustomAlert from "../components/customAlert";
-import { Formik, Form, Field } from "formik";
+import {Formik, Form, Field} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { env_data } from "../config/config";
+import {env_data} from "../config/config";
+import ImageUploadForm from "../components/ImageUploadForm";
 
 const SignUp = () => {
   const [showAlert, setShowAlert] = useState(false);
@@ -101,37 +102,38 @@ const SignUp = () => {
   };
 
   const SignupSchema = Yup.object().shape({
+
     username: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .matches(/^[A-Za-z]+$/, "Must be only Letters")
-      .required("Required"),
+        .min(2, "Too Short!")
+        .max(50, "Too Long!")
+        .matches(/^[A-Za-z]+$/, "Must be only Letters")
+        .required("Required"),
     last_name: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .matches(/^[A-Za-z]+$/, "Must be only Letters")
-      .required("Required"),
+        .min(2, "Too Short!")
+        .max(50, "Too Long!")
+        .matches(/^[A-Za-z]+$/, "Must be only Letters")
+        .required("Required"),
     email: Yup.string().email("Invalid email").required("Required"),
     mobile: Yup.string()
-      .min(10, "Invalid Number")
-      .matches(
-        /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
-        "Must be only Digits"
-      )
-      .required("Required"),
+        .min(10, "Invalid Number")
+        .matches(
+            /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/,
+            "Must be only Digits"
+        )
+        .required("Required"),
     nic: Yup.string().required("Required"),
     ref_code: Yup.string().required("Required"),
     password: Yup.string()
-      .min(8, "Must be at least 8 characters long")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*[\]{}()?"\\,><':;|_~`=+-])[a-zA-Z\d!@#$%^&*[\]{}()?"\\,><':;|_~`=+-]{12,99}$/,
-        "Must contain at least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Special Character, and 1 Number"
-      )
-      .required("Required"),
+        .min(8, "Must be at least 8 characters long")
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*[\]{}()?"\\,><':;|_~`=+-])[a-zA-Z\d!@#$%^&*[\]{}()?"\\,><':;|_~`=+-]{12,99}$/,
+            "Must contain at least 8 Characters, 1 Uppercase, 1 Lowercase, 1 Special Character, and 1 Number"
+        )
+        .required("Required"),
     confPassword: Yup.string()
-      .min(8, "Must be at least 8 characters long")
-      .oneOf([Yup.ref("password")], "Your passwords do not match.")
-      .required("Required"),
+        .min(8, "Must be at least 8 characters long")
+        .oneOf([Yup.ref("password")], "Your passwords do not match.")
+        .required("Required"),
   });
 
   const [showStep1, setShowStep1] = useState(true);
@@ -139,6 +141,7 @@ const SignUp = () => {
 
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFilesOriginalObject, setSelectedFilesOriginalObject] = useState([]);
   const [formData, setFormData] = useState({
     username: "",
     last_name: "",
@@ -159,6 +162,8 @@ const SignUp = () => {
     }
 
     setSelectedFiles(newSelectedFiles);
+    setSelectedFilesOriginalObject(files);
+    e.preventDefault();
   };
 
   const openFileBrowser = () => {
@@ -170,17 +175,33 @@ const SignUp = () => {
     setShowStep2(true);
   };
   const handleSubmit = () => {
-   console.log('object');
+    console.log('object');
   };
   const handleFormSubmit = async (values) => {
-console.log('objeco00t',values);
+    console.log('objeco00t', values);
     try {
+
+      const formData = new FormData();
+      formData.append('username', values.username);
+      formData.append('last_name', values.last_name);
+      formData.append('email', values.email);
+      formData.append('mobile', values.mobile);
+      formData.append('nic', values.nic);
+      formData.append('password', values.password);
+      formData.append('confPassword', values.confPassword);
+      formData.append('ref_code', values.ref_code);
+      formData.append(`images`, selectedFilesOriginalObject[0]);
+      formData.append(`images`, selectedFilesOriginalObject[1]);
+
       // Replace 'your/api/endpoint' with the actual URL of your API endpoint
-      const response = await axios.post(`${env_data.base_url}/register`, values);
+      const response = await fetch(`${env_data.base_url}/register`, {
+        method: 'POST',
+        body: formData,
+      });
 
       console.log("API Response:", response.data);
       setTimeout(() => {
-        navigate("/");
+          navigate("/");
       }, 2000);
       // Handle the response or update the state if necessary
     } catch (error) {
@@ -189,467 +210,504 @@ console.log('objeco00t',values);
     }
   };
   return (
-    <div className="w-full h-screen overflow-hidden fixed bg-gradient-to-br from-[#2d2d2d] via-[#151517] to-[#131314]">
-      <div className="flex w-full h-full relative">
-        <div
-          className="form-container lg:w-[60%] lg:h-auto sm:w-[80%] w-full md:w-[80%] mx-auto flex lg:flex-row flex-col rounded-[6px] z-10 relative h-screen overflow-y-scroll"
-          id="style-7"
-        >
-          <div className="lg:w-3/5 h-full flex flex-col p-8 rounded-br-[6px] rounded-tr-[6px] w-full mx-auto fixed mt-10">
-            <h2 className="text-white text-[1.2rem] font-semibold">
-              Create Your Account
-            </h2>
-            <h3 className="text-white text-[12px]">
-              Sign to experience the trending crypto platform{" "}
-            </h3>
+      <div
+          className="w-full h-screen overflow-hidden fixed bg-gradient-to-br from-[#2d2d2d] via-[#151517] to-[#131314]">
+        <div className="flex w-full h-full relative">
+          <div
+              className="form-container lg:w-[60%] lg:h-auto sm:w-[80%] w-full md:w-[80%] mx-auto flex lg:flex-row flex-col rounded-[6px] z-10 relative h-screen overflow-y-scroll"
+              id="style-7"
+          >
+            <div
+                className="lg:w-3/5 h-full flex flex-col p-8 rounded-br-[6px] rounded-tr-[6px] w-full mx-auto fixed mt-10">
+              <h2 className="text-white text-[1.2rem] font-semibold">
+                Create Your Account
+              </h2>
+              <h3 className="text-white text-[12px]">
+                Sign to experience the trending crypto platform{" "}
+              </h3>
 
-            <div className="flex flex-row w-full ">
-              <div className="step-1 w-1/2 justify-center items-center p-2 flex relative cursor-pointer">
-                <div className="w-[24px] h-[24px] md:w-[32px] md:h-[32px] flex justify-center items-center rounded-full bg-[#ffae3c]">
+              <div className="flex flex-row w-full ">
+                <div className="step-1 w-1/2 justify-center items-center p-2 flex relative cursor-pointer">
+                  <div
+                      className="w-[24px] h-[24px] md:w-[32px] md:h-[32px] flex justify-center items-center rounded-full bg-[#ffae3c]">
                   <span className="text-[8px] md:text-[12px] font-semibold z-10">
                     1
                   </span>
+                  </div>
+                  <div
+                      className="border-collapse absolute top-0 border-b-[1px] border-[#ffae3c] w-full h-1/2"></div>
                 </div>
-                <div className="border-collapse absolute top-0 border-b-[1px] border-[#ffae3c] w-full h-1/2"></div>
-              </div>
 
-              <div className="step-2 w-1/2 justify-center items-center p-2 flex relative cursor-pointer">
-                <div
-                  className="w-[24px] h-[24px] md:w-[32px] md:h-[32px] flex justify-center items-center rounded-full "
-                  style={{ backgroundColor: showStep2 ? "#ffae3c" : "#434343" }}
-                >
+                <div className="step-2 w-1/2 justify-center items-center p-2 flex relative cursor-pointer">
+                  <div
+                      className="w-[24px] h-[24px] md:w-[32px] md:h-[32px] flex justify-center items-center rounded-full "
+                      style={{backgroundColor: showStep2 ? "#ffae3c" : "#434343"}}
+                  >
                   <span className="text-[8px] md:text-[12px] font-semibold z-10">
                     2
                   </span>
+                  </div>
+                  <div
+                      className="border-collapse absolute top-0 border-b-[1px] w-full h-1/2"
+                      style={{borderColor: showStep2 ? "#ffae3c" : "#434343"}}
+                  ></div>
                 </div>
-                <div
-                  className="border-collapse absolute top-0 border-b-[1px] w-full h-1/2"
-                  style={{ borderColor: showStep2 ? "#ffae3c" : "#434343" }}
-                ></div>
               </div>
-            </div>
 
-            <Formik
-              initialValues={{
-                username: "",
-                last_name: "",
-                email: "",
-                mobile: "",
-                ref_code: "",
-                nic: "",
-                password: "",
-                confPassword: "",
-              }}
-              validationSchema={SignupSchema}
-              onSubmit={(values) => {
-                handleFormSubmit(values);
-              }}
-            >
-              {({ errors, touched }) => (
-                <Form className="flex flex-col mb-[56px]">
-                  {showStep1 && (
-                    <div className="step-1">
-                      <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
-                        <div className="form-field-label sm:flex justify-between w-full hidden ">
+              <Formik
+                  initialValues={{
+                    username: "",
+                    last_name: "",
+                    email: "",
+                    mobile: "",
+                    ref_code: "",
+                    nic: "",
+                    password: "",
+                    confPassword: "",
+                    image: null
+                  }}
+                  validationSchema={SignupSchema}
+                  onSubmit={(values) => {
+                    handleFormSubmit(values);
+                  }}
+              >
+                {({errors, touched}) => (
+                    <Form className="flex flex-col mb-[56px]" encType="multipart/form-data">
+                      {showStep1 && (
+                          <div className="step-1">
+                            <div
+                                className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
+                              <div
+                                  className="form-field-label sm:flex justify-between w-full hidden ">
                           <span className="text-white text-[12px] uppercase ">
-                            First Name
+                            User Name
                           </span>
 
-                          {errors.username && touched.username ? (
-                            <span className="text-red-600 text-[12px] ">
+                                {errors.username && touched.username ? (
+                                    <span className="text-red-600 text-[12px] ">
                               {errors.username}
                             </span>
-                          ) : null}
-                        </div>
-                        <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                          <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                ) : null}
+                              </div>
+                              <div
+                                  className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                <div
+                                    className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                             <span className="text-[16px] text-[#151515]">
-                              <Person />
+                              <Person/>
                             </span>
-                          </div>
-                          <Field
-                            type="text"
-                            name="username"
-                            id="username"
-                            placeholder="First Name"
-                            style={firstNameStyle}
-                            className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-control form-field-input"
-                            required
-                          />
-                        </div>
-                        {errors.username && touched.username ? (
-                          <span className="text-red-600 text-[12px] block sm:hidden">
+                                </div>
+                                <Field
+                                    type="text"
+                                    name="username"
+                                    id="username"
+                                    placeholder="User Name"
+                                    style={firstNameStyle}
+                                    className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-control form-field-input"
+                                    required
+                                />
+                              </div>
+                              {errors.username && touched.username ? (
+                                  <span className="text-red-600 text-[12px] block sm:hidden">
                             {errors.username}
                           </span>
-                        ) : null}
-                      </div>
+                              ) : null}
+                            </div>
 
-                      <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
-                        <div className="form-field-label sm:flex justify-between w-full hidden">
+                            <div
+                                className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
+                              <div className="form-field-label sm:flex justify-between w-full hidden">
                           <span className="text-white text-[12px] uppercase hidden sm:block">
-                            Last Name
+                            Full Name
                           </span>
-                          {errors.last_name && touched.last_name ? (
-                            <span className="text-red-600 text-[12px]">
+                                {errors.last_name && touched.last_name ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.last_name}
                             </span>
-                          ) : null}
-                        </div>
+                                ) : null}
+                              </div>
 
-                        <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                          <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                              <div
+                                  className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                <div
+                                    className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                             <span className="text-[16px] text-[#151515]">
-                              <Person />
+                              <Person/>
                             </span>
-                          </div>
-                          <Field
-                            type="text"
-                            name="last_name"
-                            id="last_name"
-                            style={lastNameStyle}
-                            placeholder="Last Name"
-                            className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-field-input"
-                            required
-                          />
-                        </div>
-                        {errors.last_name && touched.last_name ? (
-                          <span className="text-red-600 text-[12px] block sm:hidden">
+                                </div>
+                                <Field
+                                    type="text"
+                                    name="last_name"
+                                    id="last_name"
+                                    style={lastNameStyle}
+                                    placeholder="Full Name"
+                                    className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-field-input"
+                                    required
+                                />
+                              </div>
+                              {errors.last_name && touched.last_name ? (
+                                  <span className="text-red-600 text-[12px] block sm:hidden">
                             {errors.last_name}
                           </span>
-                        ) : null}
-                      </div>
+                              ) : null}
+                            </div>
 
-                      <div className="flex flex-col md:flex-row md:space-x-5">
-                        <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-1/2 space-y-2">
-                          <div className="form-field-label sm:flex justify-between w-full hidden ">
+                            <div className="flex flex-col md:flex-row md:space-x-5">
+                              <div
+                                  className="form-field-container flex flex-col sm:mt-5 mt-2 w-1/2 space-y-2">
+                                <div
+                                    className="form-field-label sm:flex justify-between w-full hidden ">
                             <span className="text-white text-[12px] uppercase ">
                               NIC
                             </span>
 
-                            {errors.nic && touched.nic ? (
-                              <span className="text-red-600 text-[12px] ">
+                                  {errors.nic && touched.nic ? (
+                                      <span className="text-red-600 text-[12px] ">
                                 {errors.nic}
                               </span>
-                            ) : null}
-                          </div>
-                          <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                            <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                  ) : null}
+                                </div>
+                                <div
+                                    className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                  <div
+                                      className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                               <span className="text-[16px] text-[#151515]">
-                                <Person />
+                                <Person/>
                               </span>
-                            </div>
-                            <Field
-                              type="text"
-                              name="nic"
-                              id="nic"
-                              placeholder="NIC"
-                              style={nicStyle}
-                              className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-control form-field-input"
-                              required
-                            />
-                          </div>
-                          {errors.nic && touched.nic ? (
-                            <span className="text-red-600 text-[12px] block sm:hidden">
+                                  </div>
+                                  <Field
+                                      type="text"
+                                      name="nic"
+                                      id="nic"
+                                      placeholder="NIC"
+                                      style={nicStyle}
+                                      className="w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-control form-field-input"
+                                      required
+                                  />
+                                </div>
+                                {errors.nic && touched.nic ? (
+                                    <span className="text-red-600 text-[12px] block sm:hidden">
                               {errors.nic}
                             </span>
-                          ) : null}
-                        </div>
+                                ) : null}
+                              </div>
 
-                        <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-1/2 space-y-2">
-                          <div className="form-field-label sm:flex justify-between w-full hidden ">
+                              <div
+                                  className="form-field-container flex flex-col sm:mt-5 mt-2 w-1/2 space-y-2">
+                                <div
+                                    className="form-field-label sm:flex justify-between w-full hidden ">
                             <span className="text-white text-[12px] uppercase ">
                               Upload NIC Digital Copy (Both Sides)
                             </span>
-                          </div>
+                                </div>
 
-                          <div
-                            onClick={openFileBrowser}
-                            className="form-field-input-container cursor-pointer w-full rounded-[6px] h-[38px] bg-[#FFA524] border-[1px] border-[#FFA524] flex flex-row justify-center items-center"
-                          >
-                            <button
-                              onClick={openFileBrowser}
-                              className="custom-file-button text-[12px]"
-                            >
-                              Choose Image(s)
-                            </button>
-                            <input
-                              type="file"
-                              ref={fileInputRef}
-                              onChange={handleFileInputChange}
-                              style={{ display: "none" }}
-                              accept="image/jpeg, image/png, image/gif"
-                              multiple
-                            />
-                          </div>
-                          <div>
-                            {selectedFiles.length > 0 && (
-                              <div>
-                                {selectedFiles.map((file, index) => (
-                                  <span
-                                    className="text-[12px] text-white"
-                                    key={index}
+                                <div
+                                    onClick={openFileBrowser}
+                                    className="form-field-input-container cursor-pointer w-full rounded-[6px] h-[38px] bg-[#FFA524] border-[1px] border-[#FFA524] flex flex-row justify-center items-center"
+                                >
+                                  <button
+                                      onClick={openFileBrowser}
+                                      className="custom-file-button text-[12px]"
                                   >
+                                    Choose Image(s)
+                                  </button>
+                                  <input
+                                      type="file"
+                                      ref={fileInputRef}
+                                      onChange={handleFileInputChange}
+                                      style={{display: "none"}}
+                                      accept="image/*"
+                                      multiple
+                                  />
+                                </div>
+                                <div>
+                                  {selectedFiles.length > 0 && (
+                                      <div>
+                                        {selectedFiles.map((file, index) => (
+                                            <span
+                                                className="text-[12px] text-white"
+                                                key={index}
+                                            >
                                     {" "}
-                                    | {file.name}
+                                              | {file.name}
                                   </span>
-                                ))}
+                                        ))}
+                                      </div>
+                                  )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                            </div>
 
-                      <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
-                        <div className="form-field-label sm:flex justify-between w-full hidden">
+                            <div
+                                className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
+                              <div className="form-field-label sm:flex justify-between w-full hidden">
                           <span className="text-white text-[12px] uppercase hidden sm:block">
                             Email
                           </span>
-                          {errors.email && touched.email ? (
-                            <span className="text-red-600 text-[12px]">
+                                {errors.email && touched.email ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.email}
                             </span>
-                          ) : null}
-                        </div>
-                        <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                          <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                ) : null}
+                              </div>
+                              <div
+                                  className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                <div
+                                    className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                             <span className="text-[16px] text-[#151515]">
-                              <AlternateEmail />
+                              <AlternateEmail/>
                             </span>
-                          </div>
-                          <Field
-                            type="text"
-                            name="email"
-                            id="email"
-                            style={emailStyle}
-                            placeholder="Email"
-                            className=" w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-field-input"
-                            required
-                          />
-                        </div>
-                        {errors.email && touched.email ? (
-                          <span className="text-red-600 text-[12px] block sm:hidden">
+                                </div>
+                                <Field
+                                    type="text"
+                                    name="email"
+                                    id="email"
+                                    style={emailStyle}
+                                    placeholder="Email"
+                                    className=" w-full h-full p-2 bg-transparent outline-none text-white text-[12px] form-field-input"
+                                    required
+                                />
+                              </div>
+                              {errors.email && touched.email ? (
+                                  <span className="text-red-600 text-[12px] block sm:hidden">
                             {errors.email}
                           </span>
-                        ) : null}
-                      </div>
+                              ) : null}
+                            </div>
 
-                      <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
-                        <div className="form-field-label sm:flex justify-between w-full hidden">
+                            <div
+                                className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
+                              <div className="form-field-label sm:flex justify-between w-full hidden">
                           <span className="text-white text-[12px] uppercase hidden sm:block">
                             Contact number
                           </span>
-                          {errors.mobile && touched.mobile ? (
-                            <span className="text-red-600 text-[12px]">
+                                {errors.mobile && touched.mobile ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.mobile}
                             </span>
-                          ) : null}
-                        </div>
-                        <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                          <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                ) : null}
+                              </div>
+                              <div
+                                  className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                <div
+                                    className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                             <span className="text-[16px] text-[#151515]">
-                              <Phone />
+                              <Phone/>
                             </span>
-                          </div>
-                          <Field
-                            type="text"
-                            name="mobile"
-                            id="mobile"
-                            style={contactNumberStyle}
-                            placeholder="Contact"
-                            className="form-field-input w-full h-full p-2 bg-transparent outline-none text-white text-[12px]"
-                            required
-                          />
-                        </div>
-                        {errors.mobile && touched.mobile ? (
-                          <span className="text-red-600 text-[12px] block sm:hidden">
+                                </div>
+                                <Field
+                                    type="text"
+                                    name="mobile"
+                                    id="mobile"
+                                    style={contactNumberStyle}
+                                    placeholder="Contact"
+                                    className="form-field-input w-full h-full p-2 bg-transparent outline-none text-white text-[12px]"
+                                    required
+                                />
+                              </div>
+                              {errors.mobile && touched.mobile ? (
+                                  <span className="text-red-600 text-[12px] block sm:hidden">
                             {errors.mobile}
                           </span>
-                        ) : null}
-                      </div>
+                              ) : null}
+                            </div>
 
-                      <div className=" flex justify-end sm:mt-5 mt-2 w-full space-y-2">
-                        <button
-                          onClick={handleNextClick}
-                          className="px-4 py-2 rounded-md bg-gradient-to-r from-[#FFA524] to-[#FFDC4A] uppercase text-[#151515] cursor-pointer font-semibold text-[12px]"
-                        >
-                          Next
-                        </button>
+                            <div className=" flex justify-end sm:mt-5 mt-2 w-full space-y-2">
+                              <button
+                                  onClick={handleNextClick}
+                                  className="px-4 py-2 rounded-md bg-gradient-to-r from-[#FFA524] to-[#FFDC4A] uppercase text-[#151515] cursor-pointer font-semibold text-[12px]"
+                              >
+                                Next
+                              </button>
 
-                        {showAlert && (
-                          <CustomAlert
-                            message="Fill all the Details"
-                            onClose={handleCloseAlert}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  )}
+                              {showAlert && (
+                                  <CustomAlert
+                                      message="Fill all the Details"
+                                      onClose={handleCloseAlert}
+                                  />
+                              )}
+                            </div>
+                          </div>
+                      )}
 
-                  {showStep2 && (
-                    <div className="step-2">
-                      <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
-                        <div className="form-field-label  sm:flex justify-between w-full hidden">
+                      {showStep2 && (
+                          <div className="step-2">
+                            <div
+                                className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2">
+                              <div
+                                  className="form-field-label  sm:flex justify-between w-full hidden">
                           <span className="text-white text-[12px] uppercase hidden sm:block">
                             Sponsor ID
                           </span>
-                          {errors.ref_code && touched.ref_code ? (
-                            <span className="text-red-600 text-[12px]">
+                                {errors.ref_code && touched.ref_code ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.ref_code}
                             </span>
-                          ) : null}
-                        </div>
-                        <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                          <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                ) : null}
+                              </div>
+                              <div
+                                  className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                <div
+                                    className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                             <span className="text-[16px] text-[#151515]">
-                              <ContactMail />
+                              <ContactMail/>
                             </span>
-                          </div>
-                          <Field
-                            type="text"
-                            name="ref_code"
-                            id="ref_code"
-                            style={sponsorStyle}
-                          
-                            placeholder="Referal ID"
-                            className="form-field-input w-full h-full p-2 bg-transparent outline-none text-white text-[12px]"
-                            required
-                           
-                          />
-                        </div>
-                        {errors.ref_code && touched.ref_code ? (
-                          <span className="text-red-600 text-[12px] block sm:hidden">
+                                </div>
+                                <Field
+                                    type="text"
+                                    name="ref_code"
+                                    id="ref_code"
+                                    style={sponsorStyle}
+
+                                    placeholder="Referal ID"
+                                    className="form-field-input w-full h-full p-2 bg-transparent outline-none text-white text-[12px]"
+                                    required
+
+                                />
+                              </div>
+                              {errors.ref_code && touched.ref_code ? (
+                                  <span className="text-red-600 text-[12px] block sm:hidden">
                             {errors.ref_code}
                           </span>
-                        ) : null}
-                      </div>
+                              ) : null}
+                            </div>
 
-                      <div className="flex flex-col md:flex-row md:space-x-5">
-                        <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2 md:w-1/2">
-                          <div className="form-field-label flex justify-between w-full">
+                            <div className="flex flex-col md:flex-row md:space-x-5">
+                              <div
+                                  className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2 md:w-1/2">
+                                <div className="form-field-label flex justify-between w-full">
                             <span className="text-white text-[12px] uppercase">
                               Password
                             </span>
-                          </div>
-                          <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                            <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                </div>
+                                <div
+                                    className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                  <div
+                                      className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                               <span className="text-[16px] text-[#151515]">
-                                <Lock />
+                                <Lock/>
                               </span>
-                            </div>
-                            <Field
-                              className="form-field-input w-[90%] h-full p-2 bg-transparent outline-none text-white text-[12px]"
-                              type={passwordVisible ? "text" : "password"}
-                              name="password"
-                              id="password"
-                              style={passwordStyle}
-                              onBlur={() => handleBlur("password")}
-                              required
-                             
-                            />
+                                  </div>
+                                  <Field
+                                      className="form-field-input w-[90%] h-full p-2 bg-transparent outline-none text-white text-[12px]"
+                                      type={passwordVisible ? "text" : "password"}
+                                      name="password"
+                                      id="password"
+                                      style={passwordStyle}
+                                      onBlur={() => handleBlur("password")}
+                                      required
 
-                            <div className=" h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
-                              {passwordVisible ? (
-                                <span
-                                  className="text-[16px] text-[#FFA524] cursor-pointer"
-                                  onClick={togglePasswordVisibility}
-                                >
-                                  <Visibility />
+                                  />
+
+                                  <div
+                                      className=" h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                    {passwordVisible ? (
+                                        <span
+                                            className="text-[16px] text-[#FFA524] cursor-pointer"
+                                            onClick={togglePasswordVisibility}
+                                        >
+                                  <Visibility/>
                                 </span>
-                              ) : (
-                                <span
-                                  className="text-[16px] text-[#FFA524] cursor-pointer"
-                                  onClick={togglePasswordVisibility}
-                                >
-                                  <VisibilityOff />
+                                    ) : (
+                                        <span
+                                            className="text-[16px] text-[#FFA524] cursor-pointer"
+                                            onClick={togglePasswordVisibility}
+                                        >
+                                  <VisibilityOff/>
                                 </span>
-                              )}
-                            </div>
-                          </div>
-                          {errors.password && touched.password ? (
-                            <span className="text-red-600 text-[12px]">
+                                    )}
+                                  </div>
+                                </div>
+                                {errors.password && touched.password ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.password}
                             </span>
-                          ) : null}
-                        </div>
+                                ) : null}
+                              </div>
 
-                        <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2 md:w-1/2">
+                              <div
+                                  className="form-field-container flex flex-col sm:mt-5 mt-2 w-full space-y-2 md:w-1/2">
                           <span className="form-field-label text-white text-[12px] uppercase">
                             Confirm Password
                           </span>
-                          <div className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
-                            <div className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                <div
+                                    className="form-field-input-container w-full rounded-[6px] h-[38px] bg-[#151515] border-[1px] border-[#FFA524] flex flex-row justify-center items-center">
+                                  <div
+                                      className="form-field-input-icobox bg-[#FFA524] h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
                               <span className="text-[16px] text-[#151515]">
-                                <Lock />
+                                <Lock/>
                               </span>
-                            </div>
-                            <Field
-                              className="form-field-input w-[90%] h-full p-2 bg-transparent outline-none text-white text-[12px]"
-                              type={
-                                confirmPasswordVisible ? "text" : "password"
-                              }
-                              name="confPassword"
-                              id="confPassword"
-                              style={confirmPasswordStyle}
-                             
-                              required
-                             
-                            />
-                            <div className=" h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
-                              {confirmPasswordVisible ? (
-                                <span
-                                  className="text-[16px] text-[#FFA524] cursor-pointer"
-                                  onClick={toggleConfirmPasswordVisibility}
-                                >
-                                  <Visibility />
+                                  </div>
+                                  <Field
+                                      className="form-field-input w-[90%] h-full p-2 bg-transparent outline-none text-white text-[12px]"
+                                      type={
+                                        confirmPasswordVisible ? "text" : "password"
+                                      }
+                                      name="confPassword"
+                                      id="confPassword"
+                                      style={confirmPasswordStyle}
+
+                                      required
+
+                                  />
+                                  <div
+                                      className=" h-[38px] w-[38px] rounded-bl-[6px] rounded-tl-[6px] justify-center items-center flex">
+                                    {confirmPasswordVisible ? (
+                                        <span
+                                            className="text-[16px] text-[#FFA524] cursor-pointer"
+                                            onClick={toggleConfirmPasswordVisibility}
+                                        >
+                                  <Visibility/>
                                 </span>
-                              ) : (
-                                <span
-                                  className="text-[16px] text-[#FFA524] cursor-pointer"
-                                  onClick={toggleConfirmPasswordVisibility}
-                                >
-                                  <VisibilityOff />
+                                    ) : (
+                                        <span
+                                            className="text-[16px] text-[#FFA524] cursor-pointer"
+                                            onClick={toggleConfirmPasswordVisibility}
+                                        >
+                                  <VisibilityOff/>
                                 </span>
-                              )}
-                            </div>
-                          </div>
-                          {errors.confPassword && touched.confPassword ? (
-                            <span className="text-red-600 text-[12px]">
+                                    )}
+                                  </div>
+                                </div>
+                                {errors.confPassword && touched.confPassword ? (
+                                    <span className="text-red-600 text-[12px]">
                               {errors.confPassword}
                             </span>
-                          ) : null}
-                        </div>
-                      </div>
+                                ) : null}
+                              </div>
+                            </div>
 
-                      <button
-                      onClick={handleSubmit}
-                        className="form-button w-full rounded-[6px] uppercase text-[#151515] font-semibold h-[44px] bg-gradient-to-r from-[#FFA524] to-[#FFDC4A] flex flex-row justify-center items-center mt-5"
-                      >
-                        Register
-                      </button>
-                    </div>
-                  )}
-                  <div className="flex flex-col mt-5 ">
+                            <button
+                                onClick={handleSubmit}
+                                className="form-button w-full rounded-[6px] uppercase text-[#151515] font-semibold h-[44px] bg-gradient-to-r from-[#FFA524] to-[#FFDC4A] flex flex-row justify-center items-center mt-5"
+                            >
+                              Register
+                            </button>
+                          </div>
+                      )}
+                      <div className="flex flex-col mt-5 ">
                     <span className="text-[14px]  text-white">
                       Already have an account?{" "}
                       <span
-                        className="text-[14px]  text-[#FFA524] cursor-pointer"
-                        onClick={navigateToLogin}
+                          className="text-[14px]  text-[#FFA524] cursor-pointer"
+                          onClick={navigateToLogin}
                       >
                         Login Here{" "}
                       </span>
                     </span>
-                  </div>
-                </Form>
-              )}
-            </Formik>
+                      </div>
+                    </Form>
+                )}
+              </Formik>
+              <ImageUploadForm/>
+            </div>
+          </div>
+
+          <div className="flex flex-row w-full justify-between items-center h-full absolute -z-10 opacity-50">
+            <AnimateImage/>
           </div>
         </div>
-
-        <div className="flex flex-row w-full justify-between items-center h-full absolute -z-10 opacity-50">
-          <AnimateImage />
-        </div>
       </div>
-    </div>
   );
 };
 
