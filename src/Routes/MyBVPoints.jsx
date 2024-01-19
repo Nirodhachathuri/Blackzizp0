@@ -27,7 +27,7 @@ const MyBVPoints = () => {
   };
 
   let Accbalance = balance;
-  let BVbalance = Accbalance/2;
+  let BVbalance = Accbalance/5;
   let left = BVbalance / 10;
   let right = BVbalance / 10;
 
