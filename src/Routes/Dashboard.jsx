@@ -85,7 +85,7 @@ const Dashboard = () => {
   };
   const filteredData = irFamily?.filter((row) => {
   return (
-    row.ref_code.toLowerCase().includes(searchValue.toLowerCase()) ||
+    row.user_code.toLowerCase().includes(searchValue.toLowerCase()) ||
     row.username.toLowerCase().includes(searchValue.toLowerCase())
   );
 });
@@ -414,10 +414,10 @@ useEffect(() => {
                       {filteredData?.map((row) => (
                         <tr className="w-full" key={row.id}>
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
-                            {row.ref_code}
+                            {row.user_code}
                           </td>
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
-                            {row.username}
+                            {row.first_name}
                           </td>
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
                             {row.last_name}
@@ -431,7 +431,7 @@ useEffect(() => {
                         </tr>
                       ))}
                     </tbody>
-                  )}
+                  )}``
                 </table>
               </div>
             )}
