@@ -9,8 +9,8 @@ const MyBVPoints = () => {
     getRefUsers();
   }, []);
   const [balance, setBalance] = useState(null);
-  const [leftSideBV, setleftSideBV] = useState(null);
-  const [rightSideBV, setrightSideBV] = useState(null);
+  // const [leftSideBV, setleftSideBV] = useState(null);
+  // const [rightSideBV, setrightSideBV] = useState(null);
 
   const getRefUsers = async () => {
     const resp = await axios.get("https://infinity-new-back.onrender.com/token");
