@@ -405,9 +405,9 @@ useEffect(() => {
                   <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
                     registration DATE
                   </th>
-                  <th className="uppercase text-[12px] text-white p-2">
+{/*                   <th className="uppercase text-[12px] text-white p-2">
                     activated date
-                  </th>
+                  </th> */}
 
                   {irFamily && (
                     <tbody>
@@ -425,9 +425,9 @@ useEffect(() => {
                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
                             {row.createdAt}
                           </td>
-                          <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
+{/*                           <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40">
                             {row.createdAt}
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                     </tbody>
