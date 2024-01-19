@@ -34,8 +34,11 @@ const Dashboard = () => {
   const [refUsers, setRefUsers] = useState(null);
   const [decodeValues, setDecodeValues] = useState(null);
 
+
+  const [totalWithdrawal, setTotalWithdrawal] = useState(0);
+
   const handleCoinSelection = (coin) => {
-    setSelectedCoin(coin);
+    setSelectedCoin(coin);  
   };
 
   const [isPopUpOpen, setPopUpOpen] = useState(false);
@@ -92,6 +95,40 @@ function getPositionPercentage(data) {
       return 0;
   }
 }
+
+
+
+
+useEffect(() => {
+
+
+  const fetchTotalWithdrawal = async () => {
+    const resp = await axios.get(`${env_data.base_url}/token`);
+    const decoded = jwt_decode(resp.data.accessToken);
+    setDecodeValues(decoded);
+
+    const user_code = decoded.user_code;
+    
+    try {
+      const response = await axios.get(`${env_data.base_url}/GetTotalWithdrawn/get/${user_code}`);
+      if (typeof response.data.total === 'number') {
+        setTotalWithdrawal(response.data.total);
+      } else {
+        throw new Error('Not a number');
+      }
+    } catch (error) {
+      console.error('Error fetching total withdrawal amount:', error);
+      setError(error.toString());
+    }
+  };
+
+  fetchTotalWithdrawal();
+}, []);
+
+
+
+
+
 
   return (
     <div className="w-full bg-[#1E1E1E] h-full fixed right-0 flex flex-col ">
@@ -198,7 +235,7 @@ function getPositionPercentage(data) {
                       Total Withdrawal
                     </h4>
                     <h4 className="text-[14px] text-[#FFA524] uppercase">
-                      $50.89
+                    {error ? error : `$${totalWithdrawal.toFixed(2)}`}
                     </h4>
                   </div>
                 </div>
