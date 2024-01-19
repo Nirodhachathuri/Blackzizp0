@@ -296,7 +296,7 @@ useEffect(() => {
                   TOTAL <br /> WITHDRAWALS
                 </h3>
                 <h3 className="text-[#565656] sm:text-[1.2rem]">USDT</h3>
-                <h3 className="text-[2.2rem] text-white font-semibold">0.00</h3>
+                <h3 className="text-[2.2rem] text-white font-semibold">{error ? error : `$${totalWithdrawal.toFixed(2)}`}</h3>
               </div>
             </div>
 
