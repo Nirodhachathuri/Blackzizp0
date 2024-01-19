@@ -397,10 +397,10 @@ useEffect(() => {
                     IR Name
                   </th>
                   <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
-                    FIRST NAME
+                    USER NAME
                   </th>
                   <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
-                    LAST NAME
+                    FULL NAME
                   </th>
                   <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
                     registration DATE
