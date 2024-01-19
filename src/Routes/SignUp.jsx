@@ -18,7 +18,6 @@ import {Formik, Form, Field} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import {env_data} from "../config/config";
-import ImageUploadForm from "../components/ImageUploadForm";
 
 const SignUp = () => {
   const [showAlert, setShowAlert] = useState(false);
@@ -699,7 +698,6 @@ const SignUp = () => {
                     </Form>
                 )}
               </Formik>
-              <ImageUploadForm/>
             </div>
           </div>
 
