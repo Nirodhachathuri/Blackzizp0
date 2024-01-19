@@ -114,10 +114,10 @@ useEffect(() => {
     const decoded = jwt_decode(resp.data.accessToken);
     setDecodeValues(decoded);
 
-    const user_code = decoded.user_code;
+    const username = decoded.username;
     
     try {
-      const response = await axios.get(`${env_data.base_url}/GetTotalWithdrawn/get/${user_code}`);
+      const response = await axios.get(`${env_data.base_url}/withdraw/total/${username}`);
       if (typeof response.data.total === 'number') {
         setTotalWithdrawal(response.data.total);
       } else {
