@@ -10,22 +10,22 @@ export default function DefaultBinaryTree() {
     const [data,setData]=useState([]);
     useEffect(() => {
         fetchData();
-      }, []);
+    }, []);
 
     const fetchData=async ()=>{
         const resp = await axios.get(`${env_data.base_url}/token`);
         const decoded = jwt_decode(resp.data.accessToken);
         console.log(
-          "loged user:",
-          decoded
+            "loged user:",
+            decoded
         );
         const user_id = decoded.userId;
         const response = await axios.get(
-          `${env_data.base_url}/GetIrAllowance1/${user_id}`
+            `${env_data.base_url}/GetIrAllowance1/${user_id}`
         );
         console.log(
-          "🚀 ~ file: Dashboard.jsx:54 ~ getRefUsers ~ response:",
-          response.data.data
+            "🚀 ~ file: Dashboard.jsx:54 ~ getRefUsers ~ response:",
+            response.data.data
         );
         let resArr= response.data.data;
         resArr.push({id:decoded.userId,username: decoded.username ,user_code:decoded.user_code , ref_code:decoded.ref_code});
@@ -38,91 +38,45 @@ export default function DefaultBinaryTree() {
             }
         })
 
-          const mainArray = createNestedArray([], mapedArr, decoded.ref_code);
-          setData(mainArray);
+        const mainArray = createNestedArray([], mapedArr, decoded.ref_code);
+        console.log("mainArray ", mainArray)
+        setData(mainArray);
 
     }
 
-    // const [data] = useState([
-    //     {
-    //         label: 'ChathuraPD6',
-    //         className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //         expanded: true,
-    //         children: [
-    //             {
-    //                 label: 'Kalana66',
-    //                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                 expanded: true,
-    //                 children: [
-    //                     {
-    //                         className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                         label: 'Chathurar87'
-    //                     },
-    //                     {
-    //                         className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                         label: 'Shehan97',
-    //                         expanded: true,
-    //                         children : [
-    //                             {
-    //                                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                                 label:'Ashani12K'
-    //                             },
-    //                             {
-    //                                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                                 label:'NimsaraLakruwan99'
-    //                             }
-                               
-    //                         ]
-    //                     }
-    //                 ]
-    //             },
-    //             {
-    //                 label: 'AnudhaKt23',
-    //                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                 expanded: true,
-    //                 children: [
-    //                     {
-    //                         className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                         label: 'Nimal99'
-    //                     },
-    //                     {
-    //                         className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-    //                         label: 'Kasun64'
-    //                     }
-    //                 ]
-    //             }
-    //         ]
-    //     }
-    // ]);
-
-    function createNestedArray(mainArray, dataArray, parentId) {
+    const createNestedArray = (mainArray, dataArray, parentId) => {
         const result = [];
-        
         for (const dataItem of dataArray) {
-          if (dataItem.ref_code === parentId) {
-            const newItem = {
-              id: dataItem.id,
-              username: dataItem.username,
-              user_code: dataItem.user_code,
-              ref_code: dataItem.ref_code,
-              label: dataItem.label,
-              className: dataItem.className,
-              expanded: dataItem.expanded,
-            };
-      
-            const children = createNestedArray(mainArray, dataArray, dataItem.user_code);
-      
-            if (children.length > 0) {
-              newItem.children = children;
+            if (dataItem.ref_code === parentId) {
+                const newItem = {
+                    id: dataItem.id,
+                    username: dataItem.username,
+                    user_code: dataItem.user_code,
+                    ref_code: dataItem.ref_code,
+                    label: dataItem.username,
+                    className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
+                    expanded: dataItem.expanded,
+                };
+                const children = createNestedArray(mainArray, dataArray, dataItem.user_code);
+                if (children.length > 0) {
+                    newItem.children = [];
+                    newItem.downwardPyramid = [];
+
+                    for (let i = 0; i < children.length; i++) {
+                        if (i < 2) {
+                            newItem.children.push(children[i]);
+                        } else {
+                            newItem.downwardPyramid.push(children[i]);
+                        }
+                    }
+
+                }
+                result.push(newItem);
             }
-      
-            result.push(newItem);
-          }
         }
-      
         return result;
-    } 
-    
+    }
+
 
     return (
         <div className="card-tree overflow-x-auto w-full" id="style-5">
@@ -140,4 +94,4 @@ export default function DefaultBinaryTree() {
         </div>
     )
 }
-        
+

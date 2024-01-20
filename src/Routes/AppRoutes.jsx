@@ -21,6 +21,7 @@ import MyProfile from "./MyProfile";
 import SignUp from "./SignUp";
 import Security from "./Security";
 import ForgotPassword from "./ForgotPassword";
+import AdminDash from "./Admin/AdminDash";
 
 
 
@@ -31,6 +32,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Login />} />
       <Route path="SignUp" element={<SignUp />} />
       <Route path="ForgotPassword" element={<ForgotPassword />} />
+      <Route path="/AdminDash" element={<AdminDash />} />
+
       <Route
         path="/*"
         element={
