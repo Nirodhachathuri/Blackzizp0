@@ -19,6 +19,7 @@ import { env_data } from "../../config/config";
 
 const AdminDash = () => {
   useEffect(() => {
+    getAllUsers();
     getControls();
   }, []);
   const getControls = async () => {
@@ -29,8 +30,45 @@ const AdminDash = () => {
       resp.data.controls
     );
   };
+  const getAllUsers = async () => {
+    const resp = await axios.get(`${env_data.base_url}/GetAllUsers`);
+    console.log(
+      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data.getAllUsers:",
+      resp.data.newUsers
+    );
+    setAllUsers(resp.data.newUsers);
+    const resp2 = await axios.get(`${env_data.base_url}/GetAllUsers`);
+    console.log(
+      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data./users/newregistrations:",
+      resp.data.newUsers
+    );
+    setNewUsers(resp2.data.newUsers);
+    const resp3 = await axios.get(`${env_data.base_url}/withdraw/todaycount`);
+    console.log(
+      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data./users/todaycount:",
+      resp3.data.count
+    );
+    setTotalwithCount(resp3.data.count);
+    const resp4 = await axios.get(`${env_data.base_url}/getallpackages`);
+    console.log(
+      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~getallpackages:",
+      resp4.data
+    );
+    setTotalwithCount(resp4.data);
+    const resp5 = await axios.get(`${env_data.base_url}/GetAllByPackages`);
+    console.log(
+      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~GetAllByPackages:",
+      resp5.data
+    );
+    setAllByPackages(resp5.data.packages);
+  };
   const [activeSection, setActiveSection] = useState("home");
+  const [allUsers, setAllUsers] = useState([]);
+  const [newUsers, setNewUsers] = useState([]);
+  const [allByPackages, setAllByPackages] = useState([]);
+  //  const [newUsers, setNewUsers] = useState([]);
 
+  const [totalwithCount, setTotalwithCount] = useState("");
   const handleNavClick = (sectionName) => {
     setActiveSection(sectionName);
   };
@@ -42,88 +80,12 @@ const AdminDash = () => {
   ];
 
   const DashData = [
-    { id: 1, value: 2, label: "IR Community" },
-    { id: 2, value: 1, label: "Users Online" },
-    { id: 3, value: 0, label: "Today Withdrawals" },
-    { id: 4, value: 0, label: "Today Deposits" },
-    { id: 5, value: 1, label: "Today D/S count" },
-    { id: 6, value: 2, label: "New Registrations" },
-    { id: 7, value: 5, label: "Banned Users" },
-  ];
-
-  const tableData = [
-    {
-      id: 1,
-      IRname: "dev11",
-      fname: "dev11",
-      lname: "test",
-      dob: "30-Mar-1997",
-      contact: "0766895501",
-      email: "Dev11@gmail.com",
-      regdate: "2023-05-06",
-      actdate: "2023-05-06",
-      totaldeposit: 500,
-      totalwithdrawal: 100,
-      walletbalance: 800,
-      totaldirectsale: 5,
-      totalIRallowance: 152,
-      totalORcommission: 26,
-      totalInvestIncome: 90,
-    },
-    {
-      id: 2,
-      IRname: "Dev",
-      fname: "Dev",
-      lname: "User",
-      dob: "21-Jun-1990",
-      contact: "0766895501",
-      email: "Dev@gmail.com",
-      regdate: "2023-05-06",
-      actdate: "2023-05-06",
-      totaldeposit: 500,
-      totalwithdrawal: 100,
-      walletbalance: 800,
-      totaldirectsale: 5,
-      totalIRallowance: 152,
-      totalORcommission: 26,
-      totalInvestIncome: 90,
-    },
-    {
-      id: 4,
-      IRname: "test",
-      fname: "test",
-      lname: "test",
-      dob: "05-May-1997",
-      contact: "0766895501",
-      email: "test001@gmail.com",
-      regdate: "2023-05-06",
-      actdate: "2023-05-06",
-      totaldeposit: 500,
-      totalwithdrawal: 100,
-      walletbalance: 800,
-      totaldirectsale: 5,
-      totalIRallowance: 152,
-      totalORcommission: 26,
-      totalInvestIncome: 90,
-    },
-    {
-      id: 3,
-      IRname: "User",
-      fname: "User",
-      lname: "UserLast",
-      dob: "15-Jan-1995",
-      contact: "0766895501",
-      email: "User@gmail.com",
-      regdate: "2023-05-06",
-      actdate: "2023-05-06",
-      totaldeposit: 500,
-      totalwithdrawal: 100,
-      walletbalance: 800,
-      totaldirectsale: 5,
-      totalIRallowance: 152,
-      totalORcommission: 26,
-      totalInvestIncome: 90,
-    },
+    { id: 2, value: `${newUsers?.length}`, label: "Users" },
+    { id: 3, value: `${totalwithCount}`, label: "Today Withdrawals" },
+    { id: 4, value: 0, label: "Total Income" },
+    { id: 5, value: `${allByPackages?.length}`, label: "Total Packages" },
+    { id: 6, value: `${newUsers?.length}`, label: "New Registrations" },
+    { id: 7, value: 5, label: "5% Deduction" },
   ];
 
   const [isPopDashOpen, setIsPopDashOpen] = useState(false);
@@ -202,7 +164,6 @@ const AdminDash = () => {
     },
   ]);
   const initialControls = [
-
     {
       id: 1,
       name: "MAKE_DEPOSITS",
@@ -227,7 +188,7 @@ const AdminDash = () => {
 
   const [controls, setControls] = useState(initialControls);
 
-  const limitedTableData = tableData.slice(0, selectedRowCount).map((row) => ({
+  const limitedTableData = newUsers?.slice(0, selectedRowCount).map((row) => ({
     ...row,
     checked: checkedRows[row.id] || false,
   }));
@@ -501,39 +462,33 @@ const AdminDash = () => {
                     id="style-5"
                   >
                     <table className="block whitespace-nowrap table-fixed w-full">
-                    <thead>
-    <tr>
-    <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
-                        IR Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        First Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Last Name
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        DOB
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        contact
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        email
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        registered DATE
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        activated date
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Wallet Balance
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
-                        Total Deposits
-                      </th>
-                      <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                      <thead>
+                        <tr>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
+                            IR Name
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            User Nane
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            Last Name
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            contact
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            email
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            registered DATE
+                          </th>
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            Wallet Balance
+                          </th>{" "}
+                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
+                            KYC
+                          </th>
+                          {/* <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
                         Total Withdrawals
                       </th>
                       <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
@@ -550,43 +505,37 @@ const AdminDash = () => {
                       </th>
                       <th className="uppercase text-[12px] text-white p-2 w-[220px] border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40">
                         action
-                      </th>
-    </tr>
-  </thead>
+                      </th> */}
+                        </tr>
+                      </thead>
                       <tbody className="w-full">
                         {limitedTableData.map((row) => (
                           <tr key={row.id}>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.IRname}
+                              {row.user_code}
                             </td>
                             <td className="fname text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.fname}
+                              {row.username}
                             </td>
                             <td className="lname text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.lname}
+                              {row.first_name}
                             </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.dob}
-                            </td>
+
                             <td className="contact text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.contact}
+                              {row.mobile}
                             </td>
                             <td className="email text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
                               {row.email}
                             </td>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.regdate}
+                              {row.createdAt}
                             </td>
+
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.actdate}
+                              {row.balance}
                             </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.walletbalance}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
-                              {row.totaldeposit}
-                            </td>
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
+
+                            {/* <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
                               {row.totalwithdrawal}
                             </td>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
@@ -600,7 +549,7 @@ const AdminDash = () => {
                             </td>
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 w-[220px]">
                               {row.totalInvestIncome}
-                            </td>
+                            </td> */}
 
                             <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 text-center w-[220px]">
                               <div className="mx-auto text-[12px] justify-center items-center p-2">
@@ -613,14 +562,14 @@ const AdminDash = () => {
                                         onChange={() => handleRowToggle(row.id)}
                                       />
                                     }
-                                    label={row.checked ? "Active" : "Ban"}
+                                    label={row.checked ? "Apprrove" : "Reject"}
                                     className="text-[#ffa524]"
                                   />
                                 </FormGroup>
                               </div>
                             </td>
 
-                            <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 text-center w-[220px]">
+                            {/* <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 text-center w-[220px]">
                               <div className="mx-auto text-[12px] justify-center items-center p-2">
                                 <button
                                   onClick={() =>
@@ -642,7 +591,7 @@ const AdminDash = () => {
                                   popUpData={popUpData} // Pass popUpData as a prop
                                 />
                               )}
-                            </td>
+                            </td> */}
                           </tr>
                         ))}
                       </tbody>
