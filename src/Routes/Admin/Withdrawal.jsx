@@ -19,8 +19,8 @@ const Deposit = () => {
     const respo3 = await axios
       .get(`${env_data.base_url}/GetAllWithdrawal`)
       .then((res) => {
-       console.log("🚀 ~ .then ~ res:GetAllWithdrawal", res.data.deposits)
-       setDepositDetails(res.data.deposits)
+       console.log("🚀 ~ .then ~ res:GetAllWithdrawal", res.data.withdrawals)
+       setDepositDetails(res.data.withdrawals)
       });
     console.log("🚀 ~ GetAllWithdrawal ~ respo3:", respo3)
     }

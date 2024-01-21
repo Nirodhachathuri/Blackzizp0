@@ -679,7 +679,7 @@ const SignUp = () => {
                                             </div>
 
                                             <button
-                                                onClick={handleSubmit}
+                                                onClick={handleFormSubmit}
                                                 className="form-button w-full rounded-[6px] uppercase text-[#151515] font-semibold h-[44px] bg-gradient-to-r from-[#FFA524] to-[#FFDC4A] flex flex-row justify-center items-center mt-5"
                                             >
                                                 Register

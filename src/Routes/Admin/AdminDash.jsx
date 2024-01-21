@@ -36,7 +36,16 @@ const AdminDash = () => {
       .get(`${env_data.base_url}/GetDepositDetails`)
       .then((res) => {
        console.log("🚀 ~ .then ~ res:", res.data.deposits)
-       setDepositDetails(res.data.deposits)
+       const totlDepo = res?.data?.deposits
+       const totalAmoun = totlDepo?.reduce((accumulator, transaction) => {
+         return accumulator + parseInt(transaction.amount, 10);
+       }, 0);
+       
+       console.log('amount',totalAmoun); 
+       setDepositDetails(totalAmoun);
+   
+      //  (res.data.deposits)
+
       });
     console.log("🚀 ~ getHistoryWal ~ respo3:", respo3)
   };
@@ -47,18 +56,25 @@ const AdminDash = () => {
       resp.data.newUsers
     );
     setAllUsers(resp.data.newUsers);
-    const resp2 = await axios.get(`${env_data.base_url}/GetAllUsers`);
+    const resp2 = await axios.get(`${env_data.base_url}/users/newregistrations`);
     console.log(
       "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data./users/newregistrations:",
-      resp.data.newUsers
+      resp2.data.newUsers
     );
     setNewUsers(resp2.data.newUsers);
     const resp3 = await axios.get(`${env_data.base_url}/withdraw/todaycount`);
     console.log(
-      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data./users/todaycount:",
+      "🚀 ~ file: AdminDash.jsx:24 ~ withdraw ~ resp.data./users/todaycount:",
       resp3.data.count
     );
-    setTotalwithCount(resp3.data.count);
+    const totlWith = resp3?.data?.count
+    const totalAmount = totlWith?.reduce((accumulator, transaction) => {
+      return accumulator + parseInt(transaction.amount, 10);
+    }, 0);
+    
+    console.log('totlWith',totalAmount); 
+    setTotalwithCount(totalAmount);
+
     // const resp4 = await axios.get(`${env_data.base_url}/getallpackages`);
     // console.log(
     //   "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~getallpackages:",
@@ -95,14 +111,14 @@ const AdminDash = () => {
   ];
 
   const DashData = [
-    { id: 2, value: `${newUsers?.length}`, label: "Users" },
+    { id: 2, value: `${allUsers?.length}`, label: "Users" },
     { id: 3, value: `${totalwithCount}`, label: "Today Withdrawals" },
-    { id: 4, value: 0, label: "Total Income" },
+    { id: 4, value: `${depositDetails}`, label: "Total Income" },
     { id: 5, value: `${allByPackages?.length}`, label: "Total Packages" },
     { id: 6, value: `${newUsers?.length}`, label: "New Registrations" },
     {
       id: 7,
-      value: `${Math.floor(Math.random() * 100)}`,
+      value: `${ (5 / 100) * totalwithCount}`,
       label: "5% Deduction",
     },
   ];
@@ -207,7 +223,7 @@ const AdminDash = () => {
 
   const [controls, setControls] = useState(initialControls);
 
-  const limitedTableData = newUsers?.slice(0, selectedRowCount).map((row) => ({
+  const limitedTableData = allUsers?.slice(0, selectedRowCount).map((row) => ({
     ...row,
     checked: checkedRows[row.id] || false,
   }));
