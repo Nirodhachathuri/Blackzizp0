@@ -27,56 +27,34 @@ export default function DefaultBinaryTree() {
             "🚀 ~ file: Dashboard.jsx:54 ~ getRefUsers ~ response:",
             response.data.data
         );
-        let resArr= response.data.data;
-        resArr.push({id:decoded.userId,username: decoded.username ,user_code:decoded.user_code , ref_code:decoded.ref_code});
+        let resArr = response.data.data;
+        // let downArray = response.data.data[0].downwardPyramid;
+
+        // let chanArray = children.map(data=>{
+            
+        //     if(data.children){
+        //         return{
+        //             ...data,
+        //             children:downArray,
+        //         }
+        //     }
+         
+        // })
+
         let mapedArr= resArr.map(user=>{
             return{
                 ...user,
-                label: user.username,
+                label: user.ref_code,
                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
                 expanded: true,
             }
         })
 
-        const mainArray = createNestedArray([], mapedArr, decoded.ref_code);
-        console.log("mainArray ", mainArray)
-        setData(mainArray);
+        // const mainArray = createNestedArray([], mapedArr, decoded.ref_code);
+        // console.log("mainArray ", mainArray)
+        setData(mapedArr);
 
     }
-
-    const createNestedArray = (mainArray, dataArray, parentId) => {
-        const result = [];
-        for (const dataItem of dataArray) {
-            if (dataItem.ref_code === parentId) {
-                const newItem = {
-                    id: dataItem.id,
-                    username: dataItem.username,
-                    user_code: dataItem.user_code,
-                    ref_code: dataItem.ref_code,
-                    label: dataItem.username,
-                    className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
-                    expanded: dataItem.expanded,
-                };
-                const children = createNestedArray(mainArray, dataArray, dataItem.user_code);
-                if (children.length > 0) {
-                    newItem.children = [];
-                    newItem.downwardPyramid = [];
-
-                    for (let i = 0; i < children.length; i++) {
-                        if (i < 2) {
-                            newItem.children.push(children[i]);
-                        } else {
-                            newItem.downwardPyramid.push(children[i]);
-                        }
-                    }
-
-                }
-                result.push(newItem);
-            }
-        }
-        return result;
-    }
-
 
     return (
         <div className="card-tree overflow-x-auto w-full" id="style-5">
