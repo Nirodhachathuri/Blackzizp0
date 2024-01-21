@@ -44,17 +44,19 @@ export default function DefaultBinaryTree() {
         let mapedArr= resArr.map(user=>{
             return{
                 ...user,
-                label: user.ref_code,
+                label: user.username,
                 className: 'bg-[#151515] text-[#ffffff] shadow-lg shadow-black border-[#565656] border-opacity-40 border-[1px]',
                 expanded: true,
             }
         })
 
         // const mainArray = createNestedArray([], mapedArr, decoded.ref_code);
-        // console.log("mainArray ", mainArray)
+        
         setData(mapedArr);
 
     }
+
+    
 
     return (
         <div className="card-tree overflow-x-auto w-full" id="style-5">
