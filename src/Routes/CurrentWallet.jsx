@@ -1,4 +1,4 @@
-import React, { useState,useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   TuneRounded,
   ArrowDropDownRounded,
@@ -23,6 +23,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { ethers } from "ethers";
 import { env_data } from "../config/config";
+import { ToastContainer, toast } from "react-toastify";
 
 const CurrentWallet = () => {
   useEffect(() => {
@@ -41,10 +42,10 @@ const CurrentWallet = () => {
   const [userBalance, setUserBalance] = useState(null);
   const [withdrawAmount, setWithdrawAmount] = useState(null);
   const [controls, setControls] = useState({
-    "make_deposits": false,
-    "make_withdrawals": true,
-    "packages_purchase": true
-});
+    make_deposits: false,
+    make_withdrawals: true,
+    packages_purchase: true,
+  });
 
   const connectWallet = () => {
     console.log("connect");
@@ -85,7 +86,52 @@ const CurrentWallet = () => {
       "_blank"
     );
   };
+  const Recharge = async () => {
+    console.log("object -->");
 
+    const response = await axios.get(`${env_data.base_url}/token`);
+    const decoded = jwt_decode(response.data.accessToken);
+    console.log("🚀 ~ Recharge ~ response:", response);
+    console.log("🚀 ~ Recharge ~ decoded:", decoded);
+    const respo2 = await axios
+      .post(`${env_data.base_url}/createrecharge`, {
+        amount: withdrawAmount,
+        password: decoded.username,
+      })
+      .then(() => {
+        toast.success("Recharge Success !", {
+          position: "top-right",
+        });
+        setWithdrawAmount('')
+      });
+    // console.loglog("🚀 ~ Recharge ~ res:", res)
+    // console.loglog("🚀 ~ Recharge ~ res:")
+
+    //   setJoke(true);
+  };
+  const WithdrawReq = async () => {
+    console.log("object -->");
+
+    const response = await axios.get(`${env_data.base_url}/token`);
+    const decoded = jwt_decode(response.data.accessToken);
+    console.log("🚀 ~ Recharge ~ response:", response);
+    console.log("🚀 ~ Recharge ~ decoded:", decoded);
+    const respo2 = await axios
+      .post(`${env_data.base_url}/CreateWithdraw`, {
+        amount: withdrawAmount,
+        password: decoded.username,
+      })
+      .then(() => {
+        toast.success("Recharge Success !", {
+          position: "top-right",
+        });
+        setWithdrawAmount('')
+      });
+    // console.loglog("🚀 ~ Recharge ~ res:", res)
+    // console.loglog("🚀 ~ Recharge ~ res:")
+
+    //   setJoke(true);
+  };
   const getUserBalance = (accountAddress) => {
     window.ethereum
       .request({
@@ -101,8 +147,7 @@ const CurrentWallet = () => {
   function usdtToWei(usdtAmount) {
     // Convert USDT to ETH
     const ethAmount = usdtAmount * usdtToEthExchangeRate;
-  
-  
+
     return ethAmount;
   }
   async function sendTransaction() {
@@ -117,7 +162,6 @@ const CurrentWallet = () => {
     //     value: Number(weiAmount).toString(16),
     //   },
     // ];
-
     // try {
     //   const result = await window.ethereum.request({
     //     method: "eth_sendTransaction",
@@ -249,12 +293,9 @@ const CurrentWallet = () => {
       decoded.username
     );
     const user_name = decoded.username;
-    const response = await axios.post(
-      `${env_data.base_url}/recharge/history`,
-      {
-        username: user_name,
-      }
-    );
+    const response = await axios.post(`${env_data.base_url}/recharge/history`, {
+      username: user_name,
+    });
 
     setRechargeHistory(response.data);
 
@@ -268,9 +309,8 @@ const CurrentWallet = () => {
     setWithdrawalHistory(responseWithdrawal.data);
     const responseControls = await axios.get(
       `${env_data.base_url}/systemcontrols`
-      
     );
-console.log('first',responseControls.data.controls)
+    console.log("first", responseControls.data.controls);
     setControls(responseControls.data.controls);
   };
   const getHistoryWallet = async () => {
@@ -287,29 +327,32 @@ console.log('first',responseControls.data.controls)
     );
 
     setEarningHistory(response.data.all_history);
-    calculateTotalAmountByType(response.data.all_history)
-    console.log(
-      "🚀 ~ file: MyEarnings.jsx:200 ~ getHistoryWallet ~ response.data.all_history:",
-      response.data.all_history
-    );
+    calculateTotalAmountByType(response.data.all_history);
+
+    
   };
 
- 
-
-function calculateTotalAmountByType(data, targetType) {
+  function calculateTotalAmountByType(data, targetType) {
     return data
-        .filter(item => item.type === targetType)
-        .reduce((total, item) => total + item.amount, 0);
-}
+      .filter((item) => item.type === targetType)
+      .reduce((total, item) => total + item.amount, 0);
+  }
 
-const totalCommission = calculateTotalAmountByType(earningHistory, 'commission');
-const totalDailyProfit = calculateTotalAmountByType(earningHistory, 'dailyprofit');
+  const totalCommission = calculateTotalAmountByType(
+    earningHistory,
+    "commission"
+  );
+  const totalDailyProfit = calculateTotalAmountByType(
+    earningHistory,
+    "dailyprofit"
+  );
 
-console.log('Total Commission:', totalCommission); // Output: 288.9
-console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
+  console.log("Total Commission:", totalCommission); // Output: 288.9
+  console.log("Total Daily Profit:", totalDailyProfit); // Output: 102.72
 
   return (
     <div className="w-full bg-[#1E1E1E] h-full fixed right-0 flex flex-col ">
+      <ToastContainer />
       <div className="res-body lg:ml-[300px] md:ml-[100px]  flex flex-col">
         <div
           className="flex flex-col dash-body w-full h-screen sm:p-8 p-3 overflow-y-scroll pt-[66px] "
@@ -345,11 +388,11 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
 
                     <h3 className="text-[#E08E20] text-[24px] font-semibold">
                       {" "}
-                     Wallet one - USDT {totalCommission}
+                      Wallet one - USDT {totalCommission}
                     </h3>
                     <h3 className="text-[#E08E20] text-[24px] font-semibold">
                       {" "}
-                     Wallet two - USDT {totalDailyProfit}
+                      Wallet two - USDT {totalDailyProfit}
                     </h3>
                   </div>
                 </div>
@@ -365,9 +408,8 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
                 </div>
               </div>
             </div>
-            
           </div>
-    
+
           <div className="w-full rounded-md border-[1px] border-[#565656] h-auto flex flex-col mt-5 p-5 bg-[#151515]">
             <div className="flex flex-col mt-5 w-full justify-start space-y-3 relative">
               <h2 className="md:text-[20px] text-white font-semibold uppercase text-[18px]">
@@ -401,7 +443,7 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
               <h2 className="md:text-[20px] text-white font-semibold uppercase text-[18px]">
                 select Deposit method
               </h2>
-{/* 
+              {/* 
               <div className="wallet-WD w-full flex flex-wrap gap-5 justify-center ">
                 {wmDivs.map((div, index) => {
                   const Icon = Icons[div.Icon];
@@ -443,70 +485,67 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
               </div> */}
             </div>
             <div className="form-field-container flex flex-col sm:mt-5 mt-2 w-1/2 space-y-2">
-                          <div className="form-field-label sm:flex justify-between w-full hidden ">
-                            <span className="text-white text-[12px] uppercase ">
-                              Upload Slips / Screnshots
-                            </span>
-                          </div>
+              <div className="form-field-label sm:flex justify-between w-full hidden ">
+                <span className="text-white text-[12px] uppercase ">
+                  Upload Slips / Screnshots
+                </span>
+              </div>
 
-                          <div
-                            onClick={openFileBrowser}
-                          >
-                            <button
-                              onClick={openFileBrowser}
-                          style={{
-                              width: '100%',
-                              height: '44px',
-                              marginTop: '5px',
-                              borderRadius: '4px',
-                              fontWeight: 'bold',
-                              fontSize: '16px',
-                              color: '#151515',
-                              backgroundImage: 'linear-gradient(to right, #ffd62d, #ffa524)',
-                             
-                            }} className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
-                         
-                            >
-                              Choose Image(s)
-                            </button>
-                            <input
-                              type="file"
-                              ref={fileInputRef}
-                              onChange={handleFileInputChange}
-                              style={{ display: "none" }}
-                              accept="image/jpeg, image/png, image/gif"
-                              multiple
-                            />
-                          </div>
-                          <div>
-                            {selectedFiles.length > 0 && (
-                              <div>
-                                {selectedFiles.map((file, index) => (
-                                  <span
-                                    className="text-[12px] text-white"
-                                    key={index}
-                                  >
-                                    {" "}
-                                    | {file.name}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+              <div onClick={openFileBrowser}>
+                <button
+                  onClick={openFileBrowser}
+                  style={{
+                    width: "100%",
+                    height: "44px",
+                    marginTop: "5px",
+                    borderRadius: "4px",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    color: "#151515",
+                    backgroundImage:
+                      "linear-gradient(to right, #ffd62d, #ffa524)",
+                  }}
+                  className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
+                >
+                  Choose Image(s)
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileInputChange}
+                  style={{ display: "none" }}
+                  accept="image/jpeg, image/png, image/gif"
+                  multiple
+                />
+              </div>
+              <div>
+                {selectedFiles.length > 0 && (
+                  <div>
+                    {selectedFiles.map((file, index) => (
+                      <span className="text-[12px] text-white" key={index}>
+                        {" "}
+                        | {file.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             <button
               disabled={!controls?.make_deposits}
-              onClick={sendTransaction}style={{
-                width: '100%',
-                height: '44px',
-                marginTop: '5px',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                color: '#151515',
-                backgroundImage: 'linear-gradient(to right, #ffd62d, #ffa524)',
-                cursor: !controls?.make_deposits ? 'not-allowed' : 'pointer',
-              }} className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
+              onClick={Recharge}
+              style={{
+                width: "100%",
+                height: "44px",
+                marginTop: "5px",
+                borderRadius: "4px",
+                fontWeight: "bold",
+                fontSize: "16px",
+                color: "#151515",
+                backgroundImage: "linear-gradient(to right, #ffd62d, #ffa524)",
+                // cursor: !controls?.make_deposits ? 'not-allowed' : 'pointer',
+              }}
+              className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
             >
               Deposit
             </button>
@@ -534,6 +573,8 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
               <div className="w-full sm:h-[44px] bg-[#565656] p-2 bg-opacity-10 rounded-[3px] relative flex justify-between items-center">
                 <input
                   type="text"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(e.target.value)}
                   className="bg-transparent oultine-none w-full border-none p-2 text-white"
                 />
               </div>
@@ -544,8 +585,6 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
                 select withdrawal method
               </h2>
 
-
-
               <div className="md:w-3/12 h-[32px] rounded-md bg-white flex justify-center items-center mt-5 w-full">
                 <h2 className="text-[10px] font-bold capitalize">
                   5% will be added to every withdrawal request.
@@ -553,20 +592,22 @@ console.log('Total Daily Profit:', totalDailyProfit); // Output: 102.72
               </div>
             </div>
 
-            <button disabled={!controls?.make_withdrawals}
-              onClick={sendTransaction}style={{
-                width: '100%',
-                height: '44px',
-                marginTop: '5px',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                color: '#151515',
-                backgroundImage: 'linear-gradient(to right, #ffd62d, #ffa524)',
-                cursor: !controls?.make_withdrawals ? 'not-allowed' : 'pointer',
-              }} className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
+            <button
+              disabled={controls?.make_withdrawals}
+              // onClick={WithdrawReq}
+              style={{
+                width: "100%",
+                height: "44px",
+                marginTop: "5px",
+                borderRadius: "4px",
+                fontWeight: "bold",
+                fontSize: "16px",
+                color: "#151515",
+                backgroundImage: "linear-gradient(to right, #ffd62d, #ffa524)",
+                cursor: controls?.make_withdrawals ? "not-allowed" : "pointer",
+              }}
+              className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
             >
-             
               Withdraw
             </button>
           </div>

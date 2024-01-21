@@ -13,6 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import UpdateUser from "./UpdateUser";
 import ActivePackages from "./ActivePackages";
+import Deposit from "./Deposit";
 import Withdrawal from "./Withdrawal";
 import axios from "axios";
 
@@ -31,6 +32,13 @@ const AdminDash = () => {
       "🚀 ~ file: AdminDash.jsx:24 ~ getControls ~ resp.data.controls:",
       resp.data.controls
     );
+    const respo3 = await axios
+      .get(`${env_data.base_url}/GetDepositDetails`)
+      .then((res) => {
+       console.log("🚀 ~ .then ~ res:", res.data.deposits)
+       setDepositDetails(res.data.deposits)
+      });
+    console.log("🚀 ~ getHistoryWal ~ respo3:", respo3)
   };
   const getAllUsers = async () => {
     const resp = await axios.get(`${env_data.base_url}/GetAllUsers`);
@@ -69,6 +77,7 @@ const AdminDash = () => {
   const [newUsers, setNewUsers] = useState([]);
   const [allByPackages, setAllByPackages] = useState([]);
   //  const [newUsers, setNewUsers] = useState([]);
+  const [depositDetails, setDepositDetails] = useState([]);
 
   const [totalwithCount, setTotalwithCount] = useState("");
   const handleNavClick = (sectionName) => {
@@ -766,11 +775,11 @@ const AdminDash = () => {
               </div>
             )}  {activeSection === "withdrawal" && (
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
-                {/* <Withdrawal /> */}
+                <Withdrawal />
               </div>
-            )}  {activeSection === "diposit" && (
+            )}  {activeSection === "deposit" && (
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
-                {/* <Withdrawal /> */}
+                <Deposit/>
               </div>
             )}
           </div>
