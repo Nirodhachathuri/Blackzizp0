@@ -12,6 +12,8 @@ import {
   faGem,
 } from "@fortawesome/free-solid-svg-icons";
 import UpdateUser from "./UpdateUser";
+import ActivePackages from "./ActivePackages";
+import Withdrawal from "./Withdrawal";
 import axios from "axios";
 
 import PopDash from "../../components/Admin/PopDash";
@@ -49,12 +51,12 @@ const AdminDash = () => {
       resp3.data.count
     );
     setTotalwithCount(resp3.data.count);
-    const resp4 = await axios.get(`${env_data.base_url}/getallpackages`);
-    console.log(
-      "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~getallpackages:",
-      resp4.data
-    );
-    setTotalwithCount(resp4.data);
+    // const resp4 = await axios.get(`${env_data.base_url}/getallpackages`);
+    // console.log(
+    //   "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~getallpackages:",
+    //   resp4.data
+    // );
+    // setTotalwith(resp4.data);
     const resp5 = await axios.get(`${env_data.base_url}/GetAllByPackages`);
     console.log(
       "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~GetAllByPackages:",
@@ -77,6 +79,10 @@ const AdminDash = () => {
     { name: "Home", Icon: "Home" },
     { name: "User", Icon: "Person" },
     { name: "Package", Icon: "Payment" },
+    { name: "Active", Icon: "Payment" },
+    // { name: "Active packages", Icon: "Documents" },
+    { name: "Withdrawal", Icon: "Wallet" },
+    { name: "Deposit", Icon: "Wallet" },
   ];
 
   const DashData = [
@@ -85,7 +91,11 @@ const AdminDash = () => {
     { id: 4, value: 0, label: "Total Income" },
     { id: 5, value: `${allByPackages?.length}`, label: "Total Packages" },
     { id: 6, value: `${newUsers?.length}`, label: "New Registrations" },
-    { id: 7, value: 5, label: "5% Deduction" },
+    {
+      id: 7,
+      value: `${Math.floor(Math.random() * 100)}`,
+      label: "5% Deduction",
+    },
   ];
 
   const [isPopDashOpen, setIsPopDashOpen] = useState(false);
@@ -748,6 +758,19 @@ const AdminDash = () => {
                     </table>
                   </div>
                 </div>
+              </div>
+            )}
+            {activeSection === "active" && (
+              <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
+                <ActivePackages />
+              </div>
+            )}  {activeSection === "withdrawal" && (
+              <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
+                {/* <Withdrawal /> */}
+              </div>
+            )}  {activeSection === "diposit" && (
+              <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
+                {/* <Withdrawal /> */}
               </div>
             )}
           </div>
