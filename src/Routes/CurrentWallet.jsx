@@ -96,13 +96,15 @@ const CurrentWallet = () => {
     const respo2 = await axios
       .post(`${env_data.base_url}/createrecharge`, {
         amount: withdrawAmount,
-        password: decoded.username,
+        username: decoded.username,
+        userId: decoded.userId,
       })
-      .then(() => {
+      .then((res) => {
+        console.log("🚀 ~ .then ~ res:", res);
         toast.success("Recharge Success !", {
           position: "top-right",
         });
-        setWithdrawAmount('')
+        setWithdrawAmount("");
       });
     // console.loglog("🚀 ~ Recharge ~ res:", res)
     // console.loglog("🚀 ~ Recharge ~ res:")
@@ -125,7 +127,7 @@ const CurrentWallet = () => {
         toast.success("Recharge Success !", {
           position: "top-right",
         });
-        setWithdrawAmount('')
+        setWithdrawAmount("");
       });
     // console.loglog("🚀 ~ Recharge ~ res:", res)
     // console.loglog("🚀 ~ Recharge ~ res:")
@@ -328,8 +330,6 @@ const CurrentWallet = () => {
 
     setEarningHistory(response.data.all_history);
     calculateTotalAmountByType(response.data.all_history);
-
-    
   };
 
   function calculateTotalAmountByType(data, targetType) {
@@ -711,12 +711,12 @@ const CurrentWallet = () => {
                       </td>
                       <td
                         className={
-                          row.status === "Success Operation"
+                          row.status == 0
                             ? "text-green-600 p-2 border-[#565656] border-[1px] border-opacity-40 text-[12px]"
                             : "text-red-600 p-2 border-[#565656] border-[1px] border-opacity-40 text-[12px]"
                         }
                       >
-                        {row.status}
+                        {row.status == 0 ? "pending" : "approved"}
                       </td>
                     </tr>
                   ))}

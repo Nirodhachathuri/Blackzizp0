@@ -8,7 +8,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { env_data } from "../../config/config";
 
 const Deposit = () => {
-  
   useEffect(() => {
     getHistory();
   }, []);
@@ -19,19 +18,52 @@ const Deposit = () => {
     const respo3 = await axios
       .get(`${env_data.base_url}/GetDepositDetails`)
       .then((res) => {
-       console.log("🚀 ~ .then ~ res:", res.data.deposits)
-       setDepositDetails(res.data.deposits)
+        console.log("🚀 ~ .then ~ res:", res.data.deposits);
+        setDepositDetails(res.data.deposits);
       });
-    console.log("🚀 ~ getHistoryWal ~ respo3:", respo3)
-    }
-    const [depositDetails, setDepositDetails] = useState([]);
+    console.log("🚀 ~ getHistoryWal ~ respo3:", respo3);
+  };
+  const [depositDetails, setDepositDetails] = useState([]);
+  const [checkedRows, setCheckedRows] = useState({});
+  const [selectedRowCount, setSelectedRowCount] = useState(10);
 
-  const handleRowToggle = () => {};
+  const handleRowToggle = async (rowId, newValue) => {
+    console.log("Before toggle - Checked Rows:", rowId, newValue);
+    // UpdateRecharge
+    const responseWithdrawal = await axios.put(
+      `${env_data.base_url}/UpdateRecharge`,
+      {
+        id: rowId,
+        status: newValue,
+      }
+    );
+    console.log(
+      "🚀 ~ handleRowToggle ~ responseWithdrawal:",
+      responseWithdrawal
+    );
+    getHistory();
+    setCheckedRows((prevCheckedRows) => ({
+      ...prevCheckedRows,
+      [rowId]: !prevCheckedRows[rowId],
+    }));
+
+    setTimeout(() => {
+      const selectedItem = depositDetails.find((item) => item.id === rowId);
+      console.log("Item ID:", selectedItem.id);
+      console.log("Item Status:", selectedItem.status);
+    }, 0);
+  };
+
+  const limitedTableData = depositDetails
+    ?.slice(0, selectedRowCount)
+    .map((row) => ({
+      ...row,
+      checked: checkedRows[row.id] || false,
+    }));
+
   return (
     <div className="w-full bg-[#1E1E1E] h-full fixed right-0 flex flex-col ">
       <div className="res-body lg:ml-[300px] md:ml-[100px] flex flex-col">
-       
-
         <div
           className="flex flex-col dash-body w-full h-screen sm:p-8 p-3 overflow-y-scroll pt-[66px] "
           id="style-6"
@@ -40,7 +72,6 @@ const Deposit = () => {
 
           <div className="w-full rounded-md border-[1px] border-[#565656] h-auto flex flex-col mt-5 p-5 bg-[#151515]">
             <div className="w-full justify-end items-center flex flex-row">
-              
               <div className="flex flex-row justify-center items-center space-x-3">
                 <span className="text-white font-normal text-[12px] ">
                   Search
@@ -63,7 +94,7 @@ const Deposit = () => {
                   Price
                 </th>
                 <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
-               status
+                  status
                 </th>
 
                 <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-opacity-40">
@@ -71,7 +102,7 @@ const Deposit = () => {
                 </th>
                 {/* <th className="uppercase text-[12px] text-white p-2">MORE</th> */}
                 <tbody>
-                  {depositDetails?.map((item, index) => (
+                  {limitedTableData?.map((item, index) => (
                     <tr key={index} className="w-full">
                       {/* Add the appropriate data from the item to each <td> */}
                       <td className="text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 bg-[#1a1a1a]">
@@ -93,11 +124,18 @@ const Deposit = () => {
                               control={
                                 <Switch
                                   size="small"
-                                  checked={false}
-                                  onChange={() => handleRowToggle(item.id)}
+                                  checked={item.status}
+                                  onChange={() =>
+                                    handleRowToggle(
+                                      item.id,
+                                      !checkedRows[item.id]
+                                    )
+                                  }
                                 />
                               }
-                              label={!item?.checked ? "Apprrove" : "Reject"}
+                              label={
+                                checkedRows[item.id] ? "Approve" : "Reject"
+                              }
                               className="text-[#ffa524]"
                             />
                           </FormGroup>
@@ -106,7 +144,6 @@ const Deposit = () => {
                     </tr>
                   ))}
                 </tbody>
-               
               </table>
             </div>
           </div>
