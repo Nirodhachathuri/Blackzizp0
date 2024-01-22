@@ -116,12 +116,13 @@ const CurrentWallet = () => {
 
     const response = await axios.get(`${env_data.base_url}/token`);
     const decoded = jwt_decode(response.data.accessToken);
-    console.log("🚀 ~ Recharge ~ response:", response);
-    console.log("🚀 ~ Recharge ~ decoded:", decoded);
+    console.log("🚀 ~ WithdrawReq ~ response:", response);
+    console.log("🚀 ~ WithdrawReq ~ decoded:", decoded);
     const respo2 = await axios
       .post(`${env_data.base_url}/CreateWithdraw`, {
         amount: withdrawAmount,
         password: decoded.username,
+        userId: decoded.userId,
       })
       .then(() => {
         toast.success("Recharge Success !", {
@@ -129,10 +130,7 @@ const CurrentWallet = () => {
         });
         setWithdrawAmount("");
       });
-    // console.loglog("🚀 ~ Recharge ~ res:", res)
-    // console.loglog("🚀 ~ Recharge ~ res:")
-
-    //   setJoke(true);
+    console.log("🚀 ~ WithdrawReq ~ respo2:", respo2);
   };
   const getUserBalance = (accountAddress) => {
     window.ethereum
@@ -594,7 +592,7 @@ const CurrentWallet = () => {
 
             <button
               disabled={controls?.make_withdrawals}
-              // onClick={WithdrawReq}
+              onClick={WithdrawReq}
               style={{
                 width: "100%",
                 height: "44px",
