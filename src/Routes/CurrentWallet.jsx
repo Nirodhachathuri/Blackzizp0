@@ -61,18 +61,22 @@ const CurrentWallet = () => {
       setErrorMessage("Install MetaMask please!!");
     }
   };
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState(null);
 
-  const handleFileInputChange = (e) => {
-    const files = e.target.files;
-    const newSelectedFiles = [];
+  // const handleFileInputChange = (e) => {
+  //   const files = e.target.files;
+  //   const newSelectedFiles = [];
 
-    for (let i = 0; i < Math.min(2, files.length); i++) {
-      newSelectedFiles.push(files[i]);
-    }
+  //   for (let i = 0; i < Math.min(2, files.length); i++) {
+  //     newSelectedFiles.push(files[i]);
+  //   }
 
-    setSelectedFiles(newSelectedFiles);
+  //   setSelectedFiles(newSelectedFiles);
+  // };
+  const handleFileChange = (event) => {
+    setSelectedFiles(event.target.files[0]);
   };
+
   const accountChanged = (accountName) => {
     setDefaultAccount(accountName);
     getUserBalance(accountName);
@@ -93,20 +97,40 @@ const CurrentWallet = () => {
     const decoded = jwt_decode(response.data.accessToken);
     console.log("🚀 ~ Recharge ~ response:", response);
     console.log("🚀 ~ Recharge ~ decoded:", decoded);
-    const respo2 = await axios
-      .post(`${env_data.base_url}/createrecharge`, {
-        amount: withdrawAmount,
-        username: decoded.username,
-        userId: decoded.userId,
-      })
-      .then((res) => {
-        console.log("🚀 ~ .then ~ res:", res);
+    const formData = new FormData();
+    formData.append("username", decoded.username);
+    formData.append("userId", decoded.userId);
+    formData.append("amount", withdrawAmount);
+    formData.append("image", selectedFiles); // 'image' should match the field name in your backend
+    console.log("FormData contents:", formData);
+
+    axios
+      .post(`${env_data.base_url}/createrecharge`, formData)
+      .then((response) => {
+        console.log(response.data);
         toast.success("Recharge Success !", {
           position: "top-right",
         });
-        getHistory()
+        getHistory();
         setWithdrawAmount("");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
       });
+    // const respo2 = await axios
+    //   .post(`${env_data.base_url}/createrecharge`, {
+    //     amount: withdrawAmount,
+    //     username: decoded.username,
+    //     userId: decoded.userId,
+    //   })
+    //   .then((res) => {
+    //     console.log("🚀 ~ .then ~ res:", res);
+    //     toast.success("Recharge Success !", {
+    //       position: "top-right",
+    //     });
+    //     getHistory();
+    //     setWithdrawAmount("");
+    //   });
     // console.loglog("🚀 ~ Recharge ~ res:", res)
     // console.loglog("🚀 ~ Recharge ~ res:")
 
@@ -118,7 +142,8 @@ const CurrentWallet = () => {
     const response = await axios.get(`${env_data.base_url}/token`);
     const decoded = jwt_decode(response.data.accessToken);
     console.log("🚀 ~ WithdrawReq ~ response:", response);
-    console.log("🚀 ~ WithdrawReq ~ decoded:", decoded);
+    console.log("🚀 ~ selectedFiles ~ decoded:", decoded);
+
     const respo2 = await axios
       .post(`${env_data.base_url}/CreateWithdraw`, {
         amount: withdrawAmount,
@@ -129,7 +154,7 @@ const CurrentWallet = () => {
         toast.success("Recharge Success !", {
           position: "top-right",
         });
-        getHistory()
+        getHistory();
         setWithdrawAmount("");
       });
     console.log("🚀 ~ WithdrawReq ~ respo2:", respo2);
@@ -174,14 +199,14 @@ const CurrentWallet = () => {
     //   console.error(error);
     // }
   }
-  const fileInputRef = useRef(null);
+  // const fileInputRef = useRef(null);
 
   const handleDivClick = (index) => {
     setSelectedOption(index);
   };
-  const openFileBrowser = () => {
-    fileInputRef.current.click();
-  };
+  // const openFileBrowser = () => {
+  //   fileInputRef.current.click();
+  // };
 
   const wmDivs = [
     { text: "USDT", Icon: "CurrencyBitcoin", image: USDT, bg: "#15d5b8" },
@@ -307,7 +332,7 @@ const CurrentWallet = () => {
         username: user_name,
       }
     );
-    console.log("🚀 ~ getHistory ~ responseWithdrawal:", responseWithdrawal)
+    console.log("🚀 ~ getHistory ~ responseWithdrawal:", responseWithdrawal);
 
     setWithdrawalHistory(responseWithdrawal.data);
     const responseControls = await axios.get(
@@ -492,9 +517,8 @@ const CurrentWallet = () => {
                 </span>
               </div>
 
-              <div onClick={openFileBrowser}>
-                <button
-                  onClick={openFileBrowser}
+              <div>
+                <input
                   style={{
                     width: "100%",
                     height: "44px",
@@ -506,23 +530,16 @@ const CurrentWallet = () => {
                     backgroundImage:
                       "linear-gradient(to right, #ffd62d, #ffa524)",
                   }}
-                  className="w-full h-[44px] mt-5 rounded-md font-bold text-[16px] text-[#151515] bg-gradient-to-r from-[#ffd62d] to-[#ffa524]"
-                >
-                  Choose Image(s)
-                </button>
-                <input
                   type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileInputChange}
-                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                  // style={{ display: "none" }}
                   accept="image/jpeg, image/png, image/gif"
-                  multiple
                 />
               </div>
               <div>
-                {selectedFiles.length > 0 && (
+                {selectedFiles?.length > 0 && (
                   <div>
-                    {selectedFiles.map((file, index) => (
+                    {selectedFiles?.map((file, index) => (
                       <span className="text-[12px] text-white" key={index}>
                         {" "}
                         | {file.name}
@@ -829,7 +846,7 @@ const CurrentWallet = () => {
                             : "text-red-600 p-2 border-[#565656] border-[1px] border-opacity-40 text-[12px]"
                         }
                       >
-                        {row.status==0?'Pending':'Success'}
+                        {row.status == 0 ? "Pending" : "Success"}
                       </td>
                     </tr>
                   ))}
