@@ -82,7 +82,7 @@ const MyKYC = () => {
                     </td>
                     <td className=" text-[12px] text-white p-2 border-[#565656] border-[1px] border-opacity-40 bg-[#1a1a1a] ">
                       <div className="w-[80px] justify-center items-center flex text-[10px] text-[#151515] h-[20px] font-semibold capitalize rounded-sm  bg-gradient-to-r from-[#ffd62d] to-[#ffa524] mx-auto">
-                        approved
+                        pending
                       </div>
                     </td>
                   

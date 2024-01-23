@@ -104,6 +104,7 @@ const CurrentWallet = () => {
         toast.success("Recharge Success !", {
           position: "top-right",
         });
+        getHistory()
         setWithdrawAmount("");
       });
     // console.loglog("🚀 ~ Recharge ~ res:", res)
@@ -121,13 +122,14 @@ const CurrentWallet = () => {
     const respo2 = await axios
       .post(`${env_data.base_url}/CreateWithdraw`, {
         amount: withdrawAmount,
-        password: decoded.username,
+        username: decoded.username,
         userId: decoded.userId,
       })
       .then(() => {
         toast.success("Recharge Success !", {
           position: "top-right",
         });
+        getHistory()
         setWithdrawAmount("");
       });
     console.log("🚀 ~ WithdrawReq ~ respo2:", respo2);
@@ -305,6 +307,7 @@ const CurrentWallet = () => {
         username: user_name,
       }
     );
+    console.log("🚀 ~ getHistory ~ responseWithdrawal:", responseWithdrawal)
 
     setWithdrawalHistory(responseWithdrawal.data);
     const responseControls = await axios.get(
@@ -821,12 +824,12 @@ const CurrentWallet = () => {
                       </td>
                       <td
                         className={
-                          row.status === "Success Operation"
+                          row.status == 1
                             ? "text-green-600 p-2 border-[#565656] border-[1px] border-opacity-40 text-[12px]"
                             : "text-red-600 p-2 border-[#565656] border-[1px] border-opacity-40 text-[12px]"
                         }
                       >
-                        {row.status}
+                        {row.status==0?'Pending':'Success'}
                       </td>
                     </tr>
                   ))}

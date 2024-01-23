@@ -105,6 +105,8 @@ const MyProfile = () => {
   // eslint-disable-next-line
   const [token, setToken] = useState("");
   const [expire, setExpire] = useState("");
+  const [nic, setNic] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
   // const history = useHistory();
 
   useEffect(() => {
@@ -133,6 +135,8 @@ const MyProfile = () => {
       setLastName(decoded.last_name);
       setMobile(decoded.mobile);
       setEmail(decoded.email);
+      setNic(decoded.nic);
+      setCreatedAt(decoded.createdAt);
 
       setReferralID(decoded.user_code)
       if (decoded.username === null) {
@@ -610,7 +614,7 @@ const MyProfile = () => {
                             <input
                               type="text"
                               className="w-full p-3 bg-[#1a1a1a] border-[1px] rounded-md border-[#565656] border-opacity-40 h-[44px] outline-none md:text-[1rem] text-[12px]"
-                              placeholder="981544779635"
+                              placeholder={nic}
                               readOnly
                             />
                           </div>
@@ -642,7 +646,7 @@ const MyProfile = () => {
                             <input
                               type="text"
                               className="w-full p-3 bg-[#1a1a1a] border-[1px] rounded-md border-[#565656] border-opacity-40 h-[44px] outline-none md:text-[1rem] text-[12px]"
-                              placeholder=" NIC "
+                              placeholder={createdAt.split("T")[0]}
                               readOnly
                             />
                           </div>
