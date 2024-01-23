@@ -117,24 +117,6 @@ const CurrentWallet = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-    // const respo2 = await axios
-    //   .post(`${env_data.base_url}/createrecharge`, {
-    //     amount: withdrawAmount,
-    //     username: decoded.username,
-    //     userId: decoded.userId,
-    //   })
-    //   .then((res) => {
-    //     console.log("🚀 ~ .then ~ res:", res);
-    //     toast.success("Recharge Success !", {
-    //       position: "top-right",
-    //     });
-    //     getHistory();
-    //     setWithdrawAmount("");
-    //   });
-    // console.loglog("🚀 ~ Recharge ~ res:", res)
-    // console.loglog("🚀 ~ Recharge ~ res:")
-
-    //   setJoke(true);
   };
   const WithdrawReq = async () => {
     console.log("object -->");
