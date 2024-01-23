@@ -26,15 +26,15 @@ const MyBVPoints = () => {
     // setleftSideBV(decoded.leftSideBV);
   };
 
-  let Accbalance = balance;
-  let BVbalance = Accbalance/5;
-  let left = BVbalance / 10;
-  let right = BVbalance / 10;
+  // let Accbalance = balance;
+  // let BVbalance = Accbalance/5;
+  // let left = BVbalance / 10;
+  // let right = BVbalance / 10;
 
   const bvPoints = [
-    { text: "Left BV Points", Icon: "ChevronLeft", bv: left },
-    { text: "Right BV Points", Icon: "ChevronRight", bv: right },
-    { text: "Total BV Earned", Icon: "AccountBalanceWallet", bv: BVbalance },
+    { text: "Left BV Points", Icon: "ChevronLeft", bv: 1000 },
+    { text: "Right BV Points", Icon: "ChevronRight", bv: 10000 },
+    { text: "Total BV Earned", Icon: "AccountBalanceWallet", bv: balance },
   ];
 
   return (
