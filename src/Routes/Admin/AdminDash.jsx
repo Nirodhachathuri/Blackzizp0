@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as Icons from "@mui/icons-material";
 import { TuneRounded, ArrowDropDownRounded } from "@mui/icons-material";
 import { Switch } from "@material-ui/core";
@@ -16,6 +16,8 @@ import ActivePackages from "./ActivePackages";
 import Deposit from "./Deposit";
 import Withdrawal from "./Withdrawal";
 import axios from "axios";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 import PopDash from "../../components/Admin/PopDash";
 import { env_data } from "../../config/config";
@@ -35,19 +37,18 @@ const AdminDash = () => {
     const respo3 = await axios
       .get(`${env_data.base_url}/GetDepositDetails`)
       .then((res) => {
-       console.log("🚀 ~ .then ~ res:", res.data.deposits)
-       const totlDepo = res?.data?.deposits
-       const totalAmoun = totlDepo?.reduce((accumulator, transaction) => {
-         return accumulator + parseInt(transaction.amount, 10);
-       }, 0);
-       
-       console.log('amount',totalAmoun); 
-       setDepositDetails(totalAmoun);
-   
-      //  (res.data.deposits)
+        console.log("🚀 ~ .then ~ res:", res.data.deposits);
+        const totlDepo = res?.data?.deposits;
+        const totalAmoun = totlDepo?.reduce((accumulator, transaction) => {
+          return accumulator + parseInt(transaction.amount, 10);
+        }, 0);
 
+        console.log("amount", totalAmoun);
+        setDepositDetails(totalAmoun);
+
+        //  (res.data.deposits)
       });
-    console.log("🚀 ~ getHistoryWal ~ respo3:", respo3)
+    console.log("🚀 ~ getHistoryWal ~ respo3:", respo3);
   };
   const getAllUsers = async () => {
     const resp = await axios.get(`${env_data.base_url}/GetAllUsers`);
@@ -56,7 +57,9 @@ const AdminDash = () => {
       resp.data.newUsers
     );
     setAllUsers(resp.data.newUsers);
-    const resp2 = await axios.get(`${env_data.base_url}/users/newregistrations`);
+    const resp2 = await axios.get(
+      `${env_data.base_url}/users/newregistrations`
+    );
     console.log(
       "🚀 ~ file: AdminDash.jsx:24 ~ getAllUsers ~ resp.data./users/newregistrations:",
       resp2.data.newUsers
@@ -67,12 +70,12 @@ const AdminDash = () => {
       "🚀 ~ file: AdminDash.jsx:24 ~ withdraw ~ resp.data./users/todaycount:",
       resp3.data.count
     );
-    const totlWith = resp3?.data?.count
+    const totlWith = resp3?.data?.count;
     const totalAmount = totlWith?.reduce((accumulator, transaction) => {
       return accumulator + parseInt(transaction.amount, 10);
     }, 0);
-    
-    console.log('totlWith',totalAmount); 
+
+    console.log("totlWith", totalAmount);
     setTotalwithCount(totalAmount);
 
     // const resp4 = await axios.get(`${env_data.base_url}/getallpackages`);
@@ -118,7 +121,7 @@ const AdminDash = () => {
     { id: 6, value: `${newUsers?.length}`, label: "New Registrations" },
     {
       id: 7,
-      value: `${ (5 / 100) * totalwithCount}`,
+      value: `${(5 / 100) * totalwithCount}`,
       label: "5% Deduction",
     },
   ];
@@ -335,6 +338,24 @@ const AdminDash = () => {
 
     setControls(updatedControls);
   };
+  const contentRef = useRef(null);
+  const contentRefUser = useRef(null);
+
+  const handleExportPDF = async (refr) => {
+    const content = refr.current;
+
+    if (!content) {
+      console.error("Content not found.");
+      return;
+    }
+
+    const canvas = await html2canvas(content);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF();
+
+    pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+    pdf.save("dashboard.pdf");
+  };
 
   return (
     <div className="w-full h-screen fixed ">
@@ -374,7 +395,10 @@ const AdminDash = () => {
           >
             {activeSection === "home" && (
               <div className="home flex flex-col w-full space-y-10 justify-center items-center mb-[56px]">
-                <div className="home flex flex-wrap w-full gap-5 justify-center items-center md:bg-[#1a1a1a] py-5 ">
+                <div
+                  ref={contentRef}
+                  className="home flex flex-wrap w-full gap-5 justify-center items-center md:bg-[#1a1a1a] py-5 "
+                >
                   {DashData.map((item, index) => {
                     return (
                       <div
@@ -397,7 +421,23 @@ const AdminDash = () => {
                     {isPopDashOpen && <PopDash onClose={closePopDash} />}
                   </div>
                 </div>
-
+                <button
+                  style={{
+                    width: "30%",
+                    height: "44px",
+                    marginTop: "5px",
+                    borderRadius: "4px",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    color: "#151515",
+                    backgroundImage:
+                      "linear-gradient(to right, #ffd62d, #ffa524)",
+                    // cursor: !controls?.make_deposits ? 'not-allowed' : 'pointer',
+                  }}
+                  onClick={() => handleExportPDF(contentRef)}
+                >
+                  Export to PDF
+                </button>
                 <div className="flex flex-col w-full  h-full bg-[#1a1a1a] p-10 md:space-y-5">
                   <div className="flex flex-row space-x-5 justify-start  items-center">
                     <span className="text-[#E08E20]">
@@ -436,9 +476,11 @@ const AdminDash = () => {
                 </div>
               </div>
             )}
-
             {activeSection === "user" && (
-              <div className="user flex flex-col w-full gap-5 relative overflow-hidden">
+              <div
+               
+                className="user flex flex-col w-full gap-5 relative overflow-hidden"
+              >
                 <div className="table-top-row w-full flex flex-row justify-between items-center ">
                   <div className="flex flex-row justify-center items-center space-x-3">
                     <span className="text-[14px] text-[#E08E20]">
@@ -476,7 +518,23 @@ const AdminDash = () => {
                       entries
                     </span>
                   </div>
-
+                  <button
+                    style={{
+                      width: "30%",
+                      height: "44px",
+                      marginTop: "5px",
+                      borderRadius: "4px",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      color: "#151515",
+                      backgroundImage:
+                        "linear-gradient(to right, #ffd62d, #ffa524)",
+                      // cursor: !controls?.make_deposits ? 'not-allowed' : 'pointer',
+                    }}
+                    onClick={() => handleExportPDF(contentRefUser)}
+                  >
+                    Export to PDF
+                  </button>
                   <div className="flex flex-row justify-center items-center space-x-3">
                     <span className="text-white font-normal text-[12px] hidden sm:block ">
                       Search
@@ -491,15 +549,15 @@ const AdminDash = () => {
                   </div>
                 </div>
 
-                <div className="dash-table mt-5  h-full  relative  ">
+                <div   ref={contentRefUser} className="dash-table mt-5  h-full  relative  ">
                   <div
                     className="table-container overflow-x-auto w-full "
                     id="style-5"
                   >
-                    <table className="block whitespace-nowrap table-fixed w-full">
+                    <table style={{backgroundColor:'black'}} className="block whitespace-nowrap table-fixed w-full">
                       <thead>
-                        <tr>
-                          <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
+                        <tr >
+                          <th  className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-l-[1px] border-opacity-40 w-[220px]">
                             IR Name
                           </th>
                           <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px] border-t-[1px] border-opacity-40 w-[220px]">
@@ -635,7 +693,6 @@ const AdminDash = () => {
                 </div>
               </div>
             )}
-
             {activeSection === "package" && (
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
                 <div className="table-top-row w-full flex flex-row justify-between items-center ">
@@ -789,13 +846,15 @@ const AdminDash = () => {
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
                 <ActivePackages />
               </div>
-            )}  {activeSection === "withdrawal" && (
+            )}{" "}
+            {activeSection === "withdrawal" && (
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
                 <Withdrawal />
               </div>
-            )}  {activeSection === "deposit" && (
+            )}{" "}
+            {activeSection === "deposit" && (
               <div className="package flex flex-col w-full gap-5 relative overflow-hidden">
-                <Deposit/>
+                <Deposit />
               </div>
             )}
           </div>

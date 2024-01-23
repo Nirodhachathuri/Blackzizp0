@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
@@ -6,6 +6,8 @@ import { Switch } from "@material-ui/core";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { env_data } from "../../config/config";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 const ActivePackages = () => {
   const buyPackagesData = [
@@ -24,6 +26,7 @@ const ActivePackages = () => {
   useEffect(() => {
     getHistory();
   }, []);
+  const contentRef = useRef(null);
 
   const [resData, setResData] = useState([]);
 
@@ -80,6 +83,22 @@ const ActivePackages = () => {
   const handleRowToggle = () => {
    
   };
+
+  const handleExportPDF = async (refr) => {
+    const content = refr.current;
+
+    if (!content) {
+      console.error("Content not found.");
+      return;
+    }
+
+    const canvas = await html2canvas(content);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF();
+
+    pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+    pdf.save("dashboard.pdf");
+  };
   return (
     <div className="w-full bg-[#1E1E1E] h-full fixed right-0 flex flex-col ">
       <div className="res-body lg:ml-[300px] md:ml-[100px] flex flex-col">
@@ -119,7 +138,24 @@ const ActivePackages = () => {
                               </div>
                               <span className='text-white font-normal text-[12px] '>entries</span>
                           </div> */}
-
+                          <button
+                  style={{
+                    width: "30%",
+                    height: "44px",
+                    marginTop: "5px",
+                    borderRadius: "4px",
+                    marginRight:'20px',
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    color: "#151515",
+                    backgroundImage:
+                      "linear-gradient(to right, #ffd62d, #ffa524)",
+                    // cursor: !controls?.make_deposits ? 'not-allowed' : 'pointer',
+                  }}
+                  onClick={() => handleExportPDF(contentRef)}
+                >
+                  Export to PDF
+                </button>
               <div className="flex flex-row justify-center items-center space-x-3">
                 <span className="text-white font-normal text-[12px] ">
                   Search
@@ -133,8 +169,8 @@ const ActivePackages = () => {
               </div>
             </div>
 
-            <div className="dash-table mt-5 w-full  overflow-x-auto">
-              <table className="w-full border-[1px] border-[#565656] ">
+            <div ref={contentRef} className="dash-table mt-5 w-full  overflow-x-auto">
+              <table  style={{backgroundColor:'black'}}  className="w-full border-[1px] border-[#565656] ">
                 <th className="uppercase text-[12px] text-white p-2 border-[#565656] border-r-[1px]  border-opacity-40">
                   Package
                 </th>
