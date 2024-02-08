@@ -13,7 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@material-ui/core": "^4.12.4",
     "@material/switch": "^14.0.0",
-    "@mui/icons-material": "^5.14.9",
+    "@mui/icons-material": "^5.15.5",
     "@mui/material": "^5.14.9",
     "@mui/styled-engine-sc": "^5.14.9",
     "@mui/system": "^5.14.13",
